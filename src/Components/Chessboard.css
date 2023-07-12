@@ -1,0 +1,15 @@
+.chessboard {
+    width: 800px;
+    height: 800px;
+    display: grid;
+    grid-template-columns: repeat(8, 1fr);
+    grid-template-rows: repeat(8, 1fr);
+    margin: 0 auto;
+    justify-content: center;
+    align-items: center;
+}
+
+.chessboard_cell {
+    width: 100px;
+    height: 100px;
+}
