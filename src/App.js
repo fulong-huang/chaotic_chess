@@ -7,10 +7,10 @@ import RightHandMenu from './Components/RightHandMenu';
 function App() {
   return (
     <div className="App" style={{ height: '100vh', overflow: 'auto', backgroundColor: '#282c34', display: "flex", justifyContent: "center"}}>
-      <div style={{}}>
-          <ChessboardRenderer />
+      <div style={{paddingTop:"100px"}}>
+          <ChessboardRenderer/>
       </div>
-      <RightHandMenu />
+      <RightHandMenu/>
     </div>
   );
 }
