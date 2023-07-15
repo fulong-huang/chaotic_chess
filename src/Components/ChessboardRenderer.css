@@ -30,6 +30,17 @@
     height: 100%;
 }
   
+.valid-move {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: rgba(255, 255, 255, 0.5); 
+    border-radius: 50%;
+    width: 50%; 
+    height: 50%;
+}
+
 @media (max-width: 600px) {
     .chessboard {
         max-width: 300px;

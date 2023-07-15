@@ -2,12 +2,12 @@ class ChessboardNode{
     constructor(board = [
         ['BR', 'BN', 'BB', 'BQ', 'BK', 'BB', 'BN', 'BR'],
         // ['BP', 'BP', 'BP', 'BP', 'BP', 'BP', 'BP', 'BP'],
-        ['BP', 'BP', 'BP', '', '', '', '', ''],
+        ['BP', 'BP', 'BP', '', '', '', 'WP', 'WP'],
         ['',   '',   '',   '',   '',   '',   '',   ''],
+        ['',   '',   '',   'WR',   '',   '',   '',   ''],
+        ['',   '',   '',   'BR',   '',   '',   '',   ''],
         ['',   '',   '',   '',   '',   '',   '',   ''],
-        ['',   '',   '',   '',   '',   '',   '',   ''],
-        ['',   '',   '',   '',   '',   '',   '',   ''],
-        ['WP', 'WP', 'WP', '', '', '', '', ''],
+        ['WP', 'WP', 'WP', '', '', '', 'BP', 'BP'],
         // ['WP', 'WP', 'WP', 'WP', 'WP', 'WP', 'WP', 'WP'],
         ['WR', 'WN', 'WB', 'WQ', 'WK', 'WB', 'WN', 'WR'],
     ]){
@@ -16,9 +16,8 @@ class ChessboardNode{
         this.turn = 'W';
         this.enPassant = [];
         this.promoteTo = 'Q';
-
-        // TODO:
-        // this.avaliableMoves = [];
+        this.avaliableMoves = new Map();
+        this.findAllValidMoves();
     }
 
     setPromoteTo(piece){
@@ -27,6 +26,182 @@ class ChessboardNode{
 
     getBoard(){
         return this.board;
+    }
+
+    getValidMovements(xpos, ypos){
+        let idx = xpos * 8 + ypos;
+        if(this.avaliableMoves.has(idx)){
+            return this.avaliableMoves.get(idx);
+        }
+        return [[1, 2], [3, 5]];
+    }
+
+    findAllValidMoves(){
+        for(let i = 0; i < 8; i++){
+            for(let j = 0; j < 8; j++){
+                if(this.board[i][j] === ''){
+                    continue;
+                }
+                let currColor = this.board[i][j][0];
+                if(currColor !== this.turn){
+                    continue;
+                }
+                let movesFound = [];
+                switch(this.board[i][j][1]){
+                    case 'P':
+                        if(this.checkPawnMovement(i, j, i + 1, j)){
+                            movesFound.push([i + 1, j]);
+                        }
+                        if(this.checkPawnMovement(i, j, i - 1, j)){
+                            movesFound.push([i - 1, j]);
+                        }
+                        if(this.checkPawnMovement(i, j, i + 2, j)){
+                            movesFound.push([i + 2, j]);
+                        }
+                        if(this.checkPawnMovement(i, j, i - 2, j)){
+                            movesFound.push([i - 2, j]);
+                        }
+                        if(this.checkPawnMovement(i, j, i + 1, j + 1)){
+                            movesFound.push([i + 1, j + 1]);
+                        }
+                        if(this.checkPawnMovement(i, j, i - 1, j + 1)){
+                            movesFound.push([i - 1, j + 1]);
+                        }
+                        if(this.checkPawnMovement(i, j, i + 1, j - 1)){
+                            movesFound.push([i + 1, j - 1]);
+                        }
+                        if(this.checkPawnMovement(i, j, i - 1, j - 1)){
+                            movesFound.push([i - 1, j - 1]);
+                        }
+                        break;
+                    case 'N':
+                        for(let v = -1; v < 2; v += 2){
+                            for(let h = -1; h < 2; h+= 2){
+                                let x, y;
+                                x = i + (v * 1);
+                                y = j + (h * 2);
+                                if(x > 0 && x < 8 && y > 0 && y < 8){
+                                    movesFound.push([x, y]);
+                                }
+                
+                                x = i + (v * 2);
+                                y = j + (h * 1);
+                                if(x > 0 && x < 8 && y > 0 && y < 8){
+                                    movesFound.push([x, y]);
+                                }
+                            }
+                        }
+                        break;
+                    case 'Q':
+                    case 'B':
+                        let max = i < j? i : j;
+                        for(let diff = 1; diff <= max; diff++){
+                            if(this.board[i - diff][j - diff] !== ''){
+                                if(this.board[i - diff][j - diff][0] !== this.turn){
+                                    movesFound.push([i - diff, j - diff]);
+                                }
+                                break;
+                            }
+                            movesFound.push([i - diff, j - diff]);
+                        }
+
+                        max = i < 7 - j? i : 7 - j;
+                        for(let diff = 1; diff <= max; diff++){
+                            if(this.board[i - diff][j + diff] !== ''){
+                                if(this.board[i - diff][j + diff][0] !== this.turn){
+                                    movesFound.push([i - diff, j + diff]);
+                                }
+                                break;
+                            }
+                            movesFound.push([i - diff, j + diff]);
+                        }
+
+                        max = 7 - i < j? 7 - i : j;
+                        for(let diff = 1; diff <= max; diff++){
+                            if(this.board[i + diff][j - diff] !== ''){
+                                if(this.board[i + diff][j - diff][0] !== this.turn){
+                                    movesFound.push([i + diff, j - diff]);
+                                }
+                                break;
+                            }
+                            movesFound.push([i + diff, j - diff]);
+                        }
+
+                        max = 7 - i < 7 - j? 7 - i : 7 - j;
+                        for(let diff = 1; diff <= max; diff++){
+                            if(this.board[i + diff][j + diff] !== ''){
+                                if(this.board[i + diff][j + diff][0] !== this.turn){
+                                    movesFound.push([i + diff, j + diff]);
+                                }
+                                break;
+                            }
+                            movesFound.push([i + diff, j + diff]);
+                        }
+                                                
+                        if(this.board[i][j][1] === 'B'){
+                            break;
+                        }
+                    case 'R':
+                        for(let x = i - 1; x >= 0; x--){
+                            if(this.board[x][j] !== ''){
+                                if(this.board[x][j][0] !== this.turn){
+                                    movesFound.push([x, j]);
+                                }
+                                break;
+                            }
+                            movesFound.push([x, j]);
+                        }
+                        for(let x = i + 1; x < 8; x++){
+                            if(this.board[x][j] !== ''){
+                                if(this.board[x][j][0] !== this.turn){
+                                    movesFound.push([x, j]);
+                                }
+                                break;
+                            }
+                            movesFound.push([x, j]);
+                        }
+
+                        for(let y = j - 1; y >= 0; y--){
+                            if(this.board[i][y] !== ''){
+                                if(this.board[i][y][0] !== this.turn){
+                                    movesFound.push([i, y]);
+                                }
+                                break;
+                            }
+                            movesFound.push([i, y]);
+                        }
+                        for(let y = j + 1; y < 8; y++){
+                            if(this.board[i][y] !== ''){
+                                if(this.board[i][y][0] !== this.turn){
+                                    movesFound.push([i, y]);
+                                }
+                                break;
+                            }
+                            movesFound.push([i, y]);
+                        }
+                        break;
+                    case 'K':
+                        for(let x = i - 1; x < i + 2; x++){
+                            if(x < 0 || x >= 8){
+                                continue;
+                            }
+                            for(let y = j - 1; y < j + 2; y++){
+                                if(y < 0 || y >= 8){
+                                    continue;
+                                }
+                                if(this.board[x][y] === '' || this.board[x][y][0] !== this.turn){
+                                    movesFound.push([x, y]);
+                                }
+                            }
+                        }
+                        break;
+                    default:
+                        console.log("DEFAULT");
+                }
+                this.avaliableMoves.set(i*8+ j, movesFound);
+            }
+        }
+        console.log(this.avaliableMoves);
     }
 
     selectPiece(xpos, ypos){
@@ -50,6 +225,8 @@ class ChessboardNode{
             return false;
         }
         let moveResult = this.move(xpos, ypos);
+
+        this.findAllValidMoves();
         this.prevSelectedPos = [];
 
         return moveResult;
@@ -94,7 +271,7 @@ class ChessboardNode{
             else{
                 this.turn = 'W';
             }
-            if(curPiece != 'P'){
+            if(curPiece !== 'P'){
                 this.enPassant = [];
             }
         }
@@ -174,6 +351,60 @@ class ChessboardNode{
         return true;
     }
 
+    checkPawnMovement(curX, curY, tarX, tarY){
+        if(tarX >= 8 || tarY >= 8 || tarX < 0 || tarY < 0){
+            return false;
+        }
+        let rowDiff = tarX - curX;
+        let curColor = this.board[curX][curY][0];
+        if(curColor === 'W'){
+            rowDiff = -rowDiff;
+        }
+        let colDiff = Math.abs(tarY - curY);
+        if(colDiff >= 2 || rowDiff >= 3 || rowDiff <= 0){
+            return false;
+        }
+
+        if(colDiff === 1){ // attack
+            if(rowDiff !== 1) return false;
+            // en passant
+            if(this.board[tarX][tarY] === ''){
+                if(curColor === 'W'){
+                    if(this.enPassant && this.enPassant[0] === tarX + 1 && this.enPassant[1] === tarY){
+                        return true;
+                    }
+                }
+                else{
+                    if(this.enPassant && this.enPassant[0] === tarX - 1 && this.enPassant[1] === tarY){
+                        return true;
+                    }
+                }
+                return false;
+            }
+            return true;
+        }
+
+        //move 1 
+        if(rowDiff === 1){
+            if(this.board[tarX][tarY] !== ''){
+                return false;
+            }
+        }
+
+        //move 2 in beginning
+        if(rowDiff === 2){
+            if((curColor === 'W' && curX === 6) ||
+            (curColor === 'B' && curX === 1)){
+                return true;
+            }
+            else{
+                return false;
+            }
+        }
+        return true;
+    }
+
+
     moveRook(tarX, tarY){
         const [curX, curY] = this.prevSelectedPos;
         if(curX !== tarX && curY !== tarY){
@@ -215,6 +446,7 @@ class ChessboardNode{
         return true;
     }
 
+
     moveKnight(tarX, tarY){
         const [curX, curY] = this.prevSelectedPos;
         let rowDiff = Math.abs(tarX - curX);
@@ -225,18 +457,6 @@ class ChessboardNode{
             this.board[curX][curY] = '';
             return true;
         }
-        // for(let v = -1; v < 2; v += 2){
-        //     for(let h = -1; h < 2; h+= 2){
-        //         let x, y;
-        //         x = curX + (v * 1);
-        //         y = curY + (h * 2);
-        //         console.log(`X: ${x}, Y: ${y}`);
-
-        //         x = curX + (v * 2);
-        //         y = curY + (h * 1);
-        //         console.log(`X: ${x}, Y: ${y}`);
-        //     }
-        // }
         return false;
     }
 
@@ -303,8 +523,12 @@ class ChessboardNode{
         return false;
     }
 
-    // Test if the movement is valid or not.
-    //      - currently only test if under check
+
+    // TODO:
+    //  Test if under check:
+
+    //////////// Test if the movement is valid or not.
+    ////////////      - currently only test if under check
     testMovement(curX, curY, tarX, tarY){
         
     }
