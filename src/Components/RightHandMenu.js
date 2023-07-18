@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import {Link} from 'react-router-dom'
 import './RightHandMenu.css';
 import {
   Box,
@@ -102,6 +103,10 @@ const RightHandMenu = (props) => {
               </ListItemText>
             </ListItem>
           </List>
+          {/* <Button variant="contained" href="./lobby">
+            {/* <Link to="/lobby"> TEST BUTTON TO GO TO LOBBY</Link> */}
+            {/* TEST BUTTON TO GO TO LOBBY */}
+          {/* </Button> */}
         </Drawer>
       )}
     </Box>

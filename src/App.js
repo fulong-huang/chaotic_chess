@@ -1,29 +1,25 @@
 // import logo from './logo.svg';
-import './App.css';
-import ChessboardRenderer from './Components/ChessboardRenderer';
-import RightHandMenu from './Components/RightHandMenu';
-import React, {useState, useEffect} from 'react'
+// import './App.css';
+// import React, {useState, useEffect} from 'react'
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 
-import ChessboardNode from './Components/scripts/ChessboardLogic.js';
+import ChessboardNode from './Components/scripts/ChessboardLogic';
+import ChessboardRenderer from './Components/ChessboardRenderer'; 
+import Lobby from './Components/Lobby'
+
+
 
 const chessboard = new ChessboardNode();
 
 function App() {
 
   return (
-    <div className="App" 
-      style={{ height: '100vh', 
-            overflow: 'auto', 
-            backgroundColor: '#282c34', 
-            display: "flex", 
-            justifyContent: "center"
-            }}
-    >
-      <div style={{paddingTop:"100px"}}>
-          <ChessboardRenderer chessboard={chessboard}/>
-      </div>
-      <RightHandMenu chessboard={chessboard}/>
-    </div>
+    <BrowserRouter>
+      <Routes>
+          <Route path="/" element = {<ChessboardRenderer chessboard={chessboard}/>}/>
+          <Route path="/lobby" element = {<Lobby/>} />
+      </Routes>
+    </BrowserRouter>
   );
 }
 

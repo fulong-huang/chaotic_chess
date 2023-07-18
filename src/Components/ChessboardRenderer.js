@@ -1,6 +1,8 @@
 import './ChessboardRenderer.css';
 import React, { useEffect, useState } from 'react';
 import ChessboardNode from './scripts/ChessboardLogic.js';
+import RightHandMenu from './RightHandMenu'
+import {Box} from '@mui/material'
 
 export default function ChessboardRenderer(props) {
 
@@ -12,7 +14,6 @@ export default function ChessboardRenderer(props) {
         // if move, get new board
         if(props.chessboard.selectPiece(xpos, ypos)) {
             setBoard([...props.chessboard.getBoard()]);
-            console.log("piece is moved");
             setValidTiles([]);
         }
         // get selected piece from board, 
@@ -21,7 +22,6 @@ export default function ChessboardRenderer(props) {
         //if selected piece is available, get all valid movements
         if([...props.chessboard.prevSelectedPos].length !== 0) {setValidTiles([...props.chessboard.getValidMovements(xpos,ypos)]);}
         else {
-            console.log("piece is unselected");
             setValidTiles([]);
         }
     }
@@ -39,7 +39,7 @@ export default function ChessboardRenderer(props) {
                 const isTileHighlighted = isTileValid(i, j);
                 // const tileStyle = isTileHighlighted ? { backgroundColor: 'green' } : { backgroundColor: cellColor };
                 chessboardDisplay.push(
-                    <div
+                    <Box
                         key={`${i}${j}`}
                         className="chessboard_cell"
                         style={{backgroundColor: cellColor}}
@@ -58,9 +58,9 @@ export default function ChessboardRenderer(props) {
                                 className ="chessboard_piece"
                             />)
                         }
-                        {isPieceSelected && <div className="overlay-circle"></div>}
-                        {isTileHighlighted && <div className="valid-move"></div>}
-                    </div>
+                        {isPieceSelected && <Box className="overlay-circle"></Box>}
+                        {isTileHighlighted && <Box className="valid-move"></Box>}
+                    </Box>
                 )
             }
         }
@@ -69,10 +69,18 @@ export default function ChessboardRenderer(props) {
 
 
     return (
-        <div>
-            <div className="chessboard">
+        <Box
+            style={{ height: '100vh', 
+                overflow: 'auto', 
+                backgroundColor: '#282c34', 
+                display: "flex", 
+                justifyContent: "center"
+            }}
+        >
+            <Box className="chessboard">
                 {chessboardRender()}
-            </div>
-        </div>
+            </Box>
+            <RightHandMenu chessboard={props.chessboard}/>
+        </Box>
     );
 }
