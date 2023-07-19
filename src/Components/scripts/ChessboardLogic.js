@@ -323,18 +323,10 @@ class ChessboardNode{
         return isValidMove;
     }
 
-    // TODO:
-    //  After move piece from/to position of rook, or king,
-    //      Set castle to false.
     move(tarX, tarY){
         const [curX, curY] = this.prevSelectedPos;
-        
-        // let curColor = this.board[curX][curY][0];
         let curPiece = this.board[curX][curY][1];
         switch(curPiece){
-            // TODO:
-            //  Clean up pawn movements
-            //  Add castle
             case 'P':
                 this.movePawn(tarX, tarY);
                 break;
