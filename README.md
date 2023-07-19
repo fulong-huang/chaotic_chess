@@ -2,13 +2,13 @@
 
 ## Description:
 Game of Chess, but can be played with more than two players.
-* Unlimited amount of (recommanded <= 10 to avoid visual bugs) players.
-* Each move will cost a movement point, whether the movement is valid or not.
-* Anyone can move any piece, as long as the movement is valid.
+* Unlimited amount of players.
+* Each move will cost a movement point.
+* Client can move piece of any color, as long as the movement is valid.
 * Server can set cooldown time and maximum movement points of players.
 * Only valid moves will be shown on the client side UI.
-* Client can command lines to move, or request board if out of sync.
-* Client need to select pawn promotion type before movement was placed.
+* Client can use command lines to move, or to request board if out of sync.
+* Client need to select pawn's promotion type before movement was placed.
 
 
 ## How to RUN: 
