@@ -103,9 +103,9 @@ const RightHandMenu = (props) => {
               </ListItemText>
             </ListItem>
           </List>
-          {/* <Button variant="contained" href="./lobby">
+          <Button variant="contained" href="./lobby">
             TEST BUTTON TO GO TO LOBBY
-          </Button> */}
+          </Button>
         </Drawer>
       )}
     </Box>
