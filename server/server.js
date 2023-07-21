@@ -54,6 +54,8 @@ function openNewSocket(port){
 
     const clients = new Set();
 
+    // possibly timeout 10(?) seconds to check if any client connected, 
+    //  if no clients are in the room then close it immediately
 
     wss.on('connection', (ws) => {
         clients.add(ws);
