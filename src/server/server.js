@@ -10,7 +10,7 @@ const cors = require('cors');
 
 const corsOptions = {
     origin: '*',
-}
+};
 
 app.use(cors(corsOptions));
 
@@ -19,22 +19,22 @@ app.get('/create', async (req, res) => {
     let portNum = await findAvaliablePort();
     if(portNum === 0){
         res.end('0');
-        console.log("PORT IS 0");
+        console.log('PORT IS 0');
         return;
     }
     openNewSocket(portNum);
-    res.end(JSON.stringify(portNum))
+    res.end(JSON.stringify(portNum));
     rooms.push(portNum);
 });
 
 app.get('/', async(req, res) => {
     res.end(JSON.stringify(rooms));
-    console.log("SLDIFJOWIPEG");
+    console.log('SLDIFJOWIPEG');
 });
 
 
 app.listen(3000, () =>{
-    console.log("server listening at port: ", 3000);
+    console.log('server listening at port: ', 3000);
 });
 
 
@@ -60,7 +60,7 @@ function openNewSocket(port){
     wss.on('connection', (ws) => {
         clients.add(ws);
         console.log(`Port: ${port}, New Connection, currently ${clients.size} online`);
-        ws.send("Welcome");
+        ws.send('Welcome');
 
         let clientName;
 
@@ -75,7 +75,7 @@ function openNewSocket(port){
                 return;
             }
             clientName = message;
-            console.log("Set new client name to: ", clientName);
+            console.log('Set new client name to: ', clientName);
             message = `${clientName} JOINED`;
             for(let client of clients){
                 client.send(message);
@@ -83,14 +83,14 @@ function openNewSocket(port){
         });
 
         ws.on('close', () =>{
-            console.log("Connection closed");
+            console.log('Connection closed');
             clients.delete(ws);
             //if(!clientName) return;
             for(let client of clients){
                 client.send(`${clientName} DISCONNECTED`);
             }
             if(clients.size === 0){
-                console.log("CLOSE");
+                console.log('CLOSE');
                 wss.close();
                 for(let i = 0; i < rooms.length; i++){
                     if(rooms[i] === port){
@@ -101,6 +101,6 @@ function openNewSocket(port){
             }
         });
     });
-    console.log("CREATED PORT: ", port);
+    console.log('CREATED PORT: ', port);
 }
 

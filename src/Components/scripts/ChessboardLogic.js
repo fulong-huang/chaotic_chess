@@ -58,219 +58,222 @@ class ChessboardNode{
                 }
                 let movesFound = [];
                 switch(this.board[i][j][1]){
-                    case 'P':
-                        if(this.checkPawnMovement(kingx, kingy, i, j, i + 1, j)){
-                            movesFound.push([i + 1, j]);
+                case 'P':
+                    if(this.checkPawnMovement(kingx, kingy, i, j, i + 1, j)){
+                        movesFound.push([i + 1, j]);
+                    }
+                    if(this.checkPawnMovement(kingx, kingy, i, j, i - 1, j)){
+                        movesFound.push([i - 1, j]);
+                    }
+                    if(this.checkPawnMovement(kingx, kingy, i, j, i + 2, j)){
+                        movesFound.push([i + 2, j]);
+                    }
+                    if(this.checkPawnMovement(kingx, kingy, i, j, i - 2, j)){
+                        movesFound.push([i - 2, j]);
+                    }
+                    if(this.checkPawnMovement(kingx, kingy, i, j, i + 1, j + 1)){
+                        movesFound.push([i + 1, j + 1]);
+                    }
+                    if(this.checkPawnMovement(kingx, kingy, i, j, i - 1, j + 1)){
+                        movesFound.push([i - 1, j + 1]);
+                    }
+                    if(this.checkPawnMovement(kingx, kingy, i, j, i + 1, j - 1)){
+                        movesFound.push([i + 1, j - 1]);
+                    }
+                    if(this.checkPawnMovement(kingx, kingy, i, j, i - 1, j - 1)){
+                        movesFound.push([i - 1, j - 1]);
+                    }
+                    break;
+                case 'N':
+                    for(let v = -1; v < 2; v += 2){
+                        for(let h = -1; h < 2; h+= 2){
+                            let x, y;
+                            x = i + (v * 1);
+                            y = j + (h * 2);
+                            if( 0 <= x && x < 8 && 0 <= y && y < 8 &&
+                                this.turn !== this.board[x][y][0] &&
+                                this.checkBasicMovement(kingx, kingy, i, j, x, y)){
+                                movesFound.push([x, y]);
+                            }
+            
+                            x = i + (v * 2);
+                            y = j + (h * 1);
+                            if( 0 <= x && x < 8 && 0 <= y && y < 8 &&
+                                this.turn !== this.board[x][y][0] &&
+                                this.checkBasicMovement(kingx, kingy, i, j, x, y)){
+                                movesFound.push([x, y]);
+                            }
                         }
-                        if(this.checkPawnMovement(kingx, kingy, i, j, i - 1, j)){
-                            movesFound.push([i - 1, j]);
-                        }
-                        if(this.checkPawnMovement(kingx, kingy, i, j, i + 2, j)){
-                            movesFound.push([i + 2, j]);
-                        }
-                        if(this.checkPawnMovement(kingx, kingy, i, j, i - 2, j)){
-                            movesFound.push([i - 2, j]);
-                        }
-                        if(this.checkPawnMovement(kingx, kingy, i, j, i + 1, j + 1)){
-                            movesFound.push([i + 1, j + 1]);
-                        }
-                        if(this.checkPawnMovement(kingx, kingy, i, j, i - 1, j + 1)){
-                            movesFound.push([i - 1, j + 1]);
-                        }
-                        if(this.checkPawnMovement(kingx, kingy, i, j, i + 1, j - 1)){
-                            movesFound.push([i + 1, j - 1]);
-                        }
-                        if(this.checkPawnMovement(kingx, kingy, i, j, i - 1, j - 1)){
-                            movesFound.push([i - 1, j - 1]);
-                        }
-                        break;
-                    case 'N':
-                        for(let v = -1; v < 2; v += 2){
-                            for(let h = -1; h < 2; h+= 2){
-                                let x, y;
-                                x = i + (v * 1);
-                                y = j + (h * 2);
-                                if( 0 <= x && x < 8 && 0 <= y && y < 8 &&
-                                    this.turn !== this.board[x][y][0] &&
-                                    this.checkBasicMovement(kingx, kingy, i, j, x, y)){
-                                    movesFound.push([x, y]);
+                    }
+                    break;
+                case 'Q':
+                case 'B':{
+                    let max = i < j? i : j;
+                    for(let diff = 1; diff <= max; diff++){
+                        let x = i - diff, y = j - diff;
+                        if(this.board[x][y] !== ''){
+                            if(this.board[x][y][0] !== this.turn){
+                                if(this.checkBasicMovement(kingx, kingy, i,j,x,y)){
+                                    movesFound.push([x,y]);
                                 }
-                
-                                x = i + (v * 2);
-                                y = j + (h * 1);
-                                if( 0 <= x && x < 8 && 0 <= y && y < 8 &&
-                                    this.turn !== this.board[x][y][0] &&
-                                    this.checkBasicMovement(kingx, kingy, i, j, x, y)){
-                                    movesFound.push([x, y]);
-                                }
                             }
-                        }
-                        break;
-                    case 'Q':
-                    case 'B':
-                        let max = i < j? i : j;
-                        for(let diff = 1; diff <= max; diff++){
-                            let x = i - diff, y = j - diff;
-                            if(this.board[x][y] !== ''){
-                                if(this.board[x][y][0] !== this.turn){
-                                    if(this.checkBasicMovement(kingx, kingy, i,j,x,y)){
-                                        movesFound.push([x,y]);
-                                    }
-                                }
-                                break;
-                            }
-                            if(this.checkBasicMovement(kingx, kingy, i,j,x,y)){
-                                movesFound.push([x,y]);
-                            }
-                        }
-
-                        max = i < 7 - j? i : 7 - j;
-                        for(let diff = 1; diff <= max; diff++){
-                            let x = i - diff, y = j + diff;
-                            if(this.board[x][y] !== ''){
-                                if(this.board[x][y][0] !== this.turn){
-                                    if(this.checkBasicMovement(kingx, kingy, i,j,x,y)){
-                                        movesFound.push([x,y]);
-                                    }
-                                }
-                                break;
-                            }
-                            if(this.checkBasicMovement(kingx, kingy, i,j,x,y)){
-                                movesFound.push([x,y]);
-                            }
-                        }
-
-                        max = 7 - i < j? 7 - i : j;
-                        for(let diff = 1; diff <= max; diff++){
-                            let x = i + diff, y = j - diff;
-                            if(this.board[x][y] !== ''){
-                                if(this.board[x][y][0] !== this.turn){
-                                    if(this.checkBasicMovement(kingx, kingy, i,j,x,y)){
-                                        movesFound.push([x,y]);
-                                    }
-                                }
-                                break;
-                            }
-                            if(this.checkBasicMovement(kingx, kingy, i,j,x,y)){
-                                movesFound.push([x,y]);
-                            }
-                        }
-
-                        max = 7 - i < 7 - j? 7 - i : 7 - j;
-                        for(let diff = 1; diff <= max; diff++){
-                            let x = i + diff, y = j + diff;
-                            if(this.board[x][y] !== ''){
-                                if(this.board[x][y][0] !== this.turn){
-                                    if(this.checkBasicMovement(kingx, kingy, i,j,x,y)){
-                                        movesFound.push([x,y]);
-                                    }
-                                }
-                                break;
-                            }
-                            if(this.checkBasicMovement(kingx, kingy, i,j,x,y)){
-                                movesFound.push([x,y]);
-                            }
-                        }
-                                                
-                        if(this.board[i][j][1] === 'B'){
                             break;
                         }
-                    case 'R':
-                        for(let x = i - 1; x >= 0; x--){
-                            if(this.board[x][j] !== ''){
-                                if(this.board[x][j][0] !== this.turn){
-                                    if(this.checkBasicMovement(kingx, kingy, i, j, x, j)){
-                                        movesFound.push([x, j]);
-                                    }
-                                }
-                                break;
-                            }
-                            if(this.checkBasicMovement(kingx, kingy, i, j, x, j)){
-                                movesFound.push([x, j]);
-                            }
+                        if(this.checkBasicMovement(kingx, kingy, i,j,x,y)){
+                            movesFound.push([x,y]);
                         }
-                        for(let x = i + 1; x < 8; x++){
-                            if(this.board[x][j] !== ''){
-                                if(this.board[x][j][0] !== this.turn){
-                                    if(this.checkBasicMovement(kingx, kingy, i, j, x, j)){
-                                        movesFound.push([x, j]);
-                                    }
-                                }
-                                break;
-                            }
-                            if(this.checkBasicMovement(kingx, kingy, i, j, x, j)){
-                                movesFound.push([x, j]);
-                            }
-                        }
+                    }
 
-                        for(let y = j - 1; y >= 0; y--){
-                            if(this.board[i][y] !== ''){
-                                if(this.board[i][y][0] !== this.turn){
-                                    if(this.checkBasicMovement(kingx, kingy, i, j, i, y)){
-                                        movesFound.push([i, y]);
-                                    }
+                    max = i < 7 - j? i : 7 - j;
+                    for(let diff = 1; diff <= max; diff++){
+                        let x = i - diff, y = j + diff;
+                        if(this.board[x][y] !== ''){
+                            if(this.board[x][y][0] !== this.turn){
+                                if(this.checkBasicMovement(kingx, kingy, i,j,x,y)){
+                                    movesFound.push([x,y]);
                                 }
-                                break;
                             }
-                            if(this.checkBasicMovement(kingx, kingy, i, j, i, y)){
-                                movesFound.push([i, y]);
-                            }
+                            break;
                         }
-                        for(let y = j + 1; y < 8; y++){
-                            if(this.board[i][y] !== ''){
-                                if(this.board[i][y][0] !== this.turn){
-                                    if(this.checkBasicMovement(kingx, kingy, i, j, i, y)){
-                                        movesFound.push([i, y]);
-                                    }
+                        if(this.checkBasicMovement(kingx, kingy, i,j,x,y)){
+                            movesFound.push([x,y]);
+                        }
+                    }
+
+                    max = 7 - i < j? 7 - i : j;
+                    for(let diff = 1; diff <= max; diff++){
+                        let x = i + diff, y = j - diff;
+                        if(this.board[x][y] !== ''){
+                            if(this.board[x][y][0] !== this.turn){
+                                if(this.checkBasicMovement(kingx, kingy, i,j,x,y)){
+                                    movesFound.push([x,y]);
                                 }
-                                break;
                             }
-                            if(this.checkBasicMovement(kingx, kingy, i, j, i, y)){
-                                movesFound.push([i, y]);
-                            }
+                            break;
                         }
+                        if(this.checkBasicMovement(kingx, kingy, i,j,x,y)){
+                            movesFound.push([x,y]);
+                        }
+                    }
+
+                    max = 7 - i < 7 - j? 7 - i : 7 - j;
+                    for(let diff = 1; diff <= max; diff++){
+                        let x = i + diff, y = j + diff;
+                        if(this.board[x][y] !== ''){
+                            if(this.board[x][y][0] !== this.turn){
+                                if(this.checkBasicMovement(kingx, kingy, i,j,x,y)){
+                                    movesFound.push([x,y]);
+                                }
+                            }
+                            break;
+                        }
+                        if(this.checkBasicMovement(kingx, kingy, i,j,x,y)){
+                            movesFound.push([x,y]);
+                        }
+                    }
+                                            
+                    if(this.board[i][j][1] === 'B'){
                         break;
-                    case 'K':
-                        for(let x = i - 1; x < i + 2; x++){
-                            if(x < 0 || x >= 8){
+                    }
+                    /* falls through */
+                }
+                case 'R':
+                    for(let x = i - 1; x >= 0; x--){
+                        if(this.board[x][j] !== ''){
+                            if(this.board[x][j][0] !== this.turn){
+                                if(this.checkBasicMovement(kingx, kingy, i, j, x, j)){
+                                    movesFound.push([x, j]);
+                                }
+                            }
+                            break;
+                        }
+                        if(this.checkBasicMovement(kingx, kingy, i, j, x, j)){
+                            movesFound.push([x, j]);
+                        }
+                    }
+                    for(let x = i + 1; x < 8; x++){
+                        if(this.board[x][j] !== ''){
+                            if(this.board[x][j][0] !== this.turn){
+                                if(this.checkBasicMovement(kingx, kingy, i, j, x, j)){
+                                    movesFound.push([x, j]);
+                                }
+                            }
+                            break;
+                        }
+                        if(this.checkBasicMovement(kingx, kingy, i, j, x, j)){
+                            movesFound.push([x, j]);
+                        }
+                    }
+
+                    for(let y = j - 1; y >= 0; y--){
+                        if(this.board[i][y] !== ''){
+                            if(this.board[i][y][0] !== this.turn){
+                                if(this.checkBasicMovement(kingx, kingy, i, j, i, y)){
+                                    movesFound.push([i, y]);
+                                }
+                            }
+                            break;
+                        }
+                        if(this.checkBasicMovement(kingx, kingy, i, j, i, y)){
+                            movesFound.push([i, y]);
+                        }
+                    }
+                    for(let y = j + 1; y < 8; y++){
+                        if(this.board[i][y] !== ''){
+                            if(this.board[i][y][0] !== this.turn){
+                                if(this.checkBasicMovement(kingx, kingy, i, j, i, y)){
+                                    movesFound.push([i, y]);
+                                }
+                            }
+                            break;
+                        }
+                        if(this.checkBasicMovement(kingx, kingy, i, j, i, y)){
+                            movesFound.push([i, y]);
+                        }
+                    }
+                    break;
+                case 'K':{
+                    for(let x = i - 1; x < i + 2; x++){
+                        if(x < 0 || x >= 8){
+                            continue;
+                        }
+                        for(let y = j - 1; y < j + 2; y++){
+                            if(y < 0 || y >= 8){
                                 continue;
                             }
-                            for(let y = j - 1; y < j + 2; y++){
-                                if(y < 0 || y >= 8){
-                                    continue;
-                                }
-                                if(this.board[x][y] === '' || this.board[x][y][0] !== this.turn){
-                                    if(this.checkBasicMovement(x, y, i, j, x, y)){
-                                        movesFound.push([x, y]);
-                                    }
+                            if(this.board[x][y] === '' || this.board[x][y][0] !== this.turn){
+                                if(this.checkBasicMovement(x, y, i, j, x, y)){
+                                    movesFound.push([x, y]);
                                 }
                             }
                         }
-                        // castle
-                        let queenSideCastle = 0, kingSideCastle = 1;
-                        if(this.turn === 'W'){
-                            queenSideCastle += 2;
-                            kingSideCastle += 2;
-                        }
-                        if(this.castles[queenSideCastle] &&
-                            this.board[i][j - 1] === '' &&
-                            this.board[i][j - 2] === '' &&
-                            this.board[i][j - 3] === '' &&
-                            ! this.squareUnderAttack(i, j) && 
-                            ! this.squareUnderAttack(i, j - 1) &&
-                            ! this.squareUnderAttack(i, j - 2)){
-                            movesFound.push([i, j - 2]);
-                        }
-                        if(this.castles[kingSideCastle] &&
-                            this.board[i][j + 1] === '' &&
-                            this.board[i][j + 2] === '' &&
-                            ! this.squareUnderAttack(i, j) && 
-                            ! this.squareUnderAttack(i, j - 1)){
-                            movesFound.push([i, j + 2]);
-                        }
-                        break;
-                    default:
-                        alert("Case not found");
+                    }
+                    // castle
+                    let queenSideCastle = 0, kingSideCastle = 1;
+                    if(this.turn === 'W'){
+                        queenSideCastle += 2;
+                        kingSideCastle += 2;
+                    }
+                    if(this.castles[queenSideCastle] &&
+                        this.board[i][j - 1] === '' &&
+                        this.board[i][j - 2] === '' &&
+                        this.board[i][j - 3] === '' &&
+                        ! this.squareUnderAttack(i, j) && 
+                        ! this.squareUnderAttack(i, j - 1) &&
+                        ! this.squareUnderAttack(i, j - 2)){
+                        movesFound.push([i, j - 2]);
+                    }
+                    if(this.castles[kingSideCastle] &&
+                        this.board[i][j + 1] === '' &&
+                        this.board[i][j + 2] === '' &&
+                        ! this.squareUnderAttack(i, j) && 
+                        ! this.squareUnderAttack(i, j - 1)){
+                        movesFound.push([i, j + 2]);
+                    }
+                    break;
+                }
+                default:
+                    alert('Case not found');
                 }
                 if(movesFound.length !== 0){
                     this.avaliableMoves.set(i*8+ j, movesFound);
@@ -305,17 +308,17 @@ class ChessboardNode{
             this.avaliableMoves.get(moveIdx) &&
             this.avaliableMoves.get(moveIdx).some(inner =>
                 inner.every((element, index) => element === [xpos, ypos][index])
-        );
+            );
 
         if(isValidMove){
             this.move(xpos, ypos);
             this.findAllValidMoves();
             if(this.avaliableMoves.size === 0){
                 if(this.kingUnderCheck()){
-                    alert("CHECK MATE, current turn: " + this.turn);
+                    alert('CHECK MATE, current turn: ' + this.turn);
                 }
                 else{
-                    alert("STALE MATE");
+                    alert('STALE MATE');
                 }
             }
         }
@@ -327,16 +330,16 @@ class ChessboardNode{
         const [curX, curY] = this.prevSelectedPos;
         let curPiece = this.board[curX][curY][1];
         switch(curPiece){
-            case 'P':
-                this.movePawn(tarX, tarY);
-                break;
-            case 'K':
-                this.moveKing(tarX, tarY);
-                break;
-            default: // Rook, Knight, Bishop, Queen.
-                this.board[tarX][tarY] = this.board[curX][curY];
-                this.board[curX][curY] = '';
-                this.enPassant = [];
+        case 'P':
+            this.movePawn(tarX, tarY);
+            break;
+        case 'K':
+            this.moveKing(tarX, tarY);
+            break;
+        default: // Rook, Knight, Bishop, Queen.
+            this.board[tarX][tarY] = this.board[curX][curY];
+            this.board[curX][curY] = '';
+            this.enPassant = [];
         }
         if(this.turn === 'W'){
             if(curX === 7 && curY === 0){
@@ -382,7 +385,7 @@ class ChessboardNode{
                 this.board[tarX][0] = '';
             }
             else{
-                this.board[tarX][5] = this.board[tarX][7];;
+                this.board[tarX][5] = this.board[tarX][7];
                 this.board[tarX][7] = '';
             }
         }
@@ -562,54 +565,54 @@ class ChessboardNode{
     squareUnderAttack(posx, posy){
         // Targeted by Bishop or Queen
         {
-        let max = posx < posy? posx : posy;
-        for(let diff = 1; diff <= max; diff++){
-            let currPiece = this.board[posx - diff][posy - diff];
-            if(currPiece === ''){
-                continue;
+            let max = posx < posy? posx : posy;
+            for(let diff = 1; diff <= max; diff++){
+                let currPiece = this.board[posx - diff][posy - diff];
+                if(currPiece === ''){
+                    continue;
+                }
+                if(currPiece[0] === this.turn ||
+                (currPiece[1] !== 'B' && currPiece[1] !== 'Q')){
+                    break;
+                }
+                return true;
             }
-            if(currPiece[0] === this.turn ||
-            (currPiece[1] !== 'B' && currPiece[1] !== 'Q')){
-                break;
+            max = posx < 7 - posy? posx : 7 - posy;
+            for(let diff = 1; diff <= max; diff++){
+                let currPiece = this.board[posx - diff][posy + diff];
+                if(currPiece === ''){
+                    continue;
+                }
+                if(currPiece[0] === this.turn ||
+                (currPiece[1] !== 'B' && currPiece[1] !== 'Q')){
+                    break;
+                }
+                return true;
             }
-            return true;
-        }
-        max = posx < 7 - posy? posx : 7 - posy;
-        for(let diff = 1; diff <= max; diff++){
-            let currPiece = this.board[posx - diff][posy + diff];
-            if(currPiece === ''){
-                continue;
+            max = 7 - posx < posy? 7 - posx : posy;
+            for(let diff = 1; diff <= max; diff++){
+                let currPiece = this.board[posx + diff][posy - diff];
+                if(currPiece === ''){
+                    continue;
+                }
+                if(currPiece[0] === this.turn ||
+                (currPiece[1] !== 'B' && currPiece[1] !== 'Q')){
+                    break;
+                }
+                return true;
             }
-            if(currPiece[0] === this.turn ||
-            (currPiece[1] !== 'B' && currPiece[1] !== 'Q')){
-                break;
+            max = 7 - posx < 7 - posy? 7 - posx : 7 - posy;
+            for(let diff = 1; diff <= max; diff++){
+                let currPiece = this.board[posx + diff][posy + diff];
+                if(currPiece === ''){
+                    continue;
+                }
+                if(currPiece[0] === this.turn ||
+                (currPiece[1] !== 'B' && currPiece[1] !== 'Q')){
+                    break;
+                }
+                return true;
             }
-            return true;
-        }
-        max = 7 - posx < posy? 7 - posx : posy;
-        for(let diff = 1; diff <= max; diff++){
-            let currPiece = this.board[posx + diff][posy - diff];
-            if(currPiece === ''){
-                continue;
-            }
-            if(currPiece[0] === this.turn ||
-            (currPiece[1] !== 'B' && currPiece[1] !== 'Q')){
-                break;
-            }
-            return true;
-        }
-        max = 7 - posx < 7 - posy? 7 - posx : 7 - posy;
-        for(let diff = 1; diff <= max; diff++){
-            let currPiece = this.board[posx + diff][posy + diff];
-            if(currPiece === ''){
-                continue;
-            }
-            if(currPiece[0] === this.turn ||
-            (currPiece[1] !== 'B' && currPiece[1] !== 'Q')){
-                break;
-            }
-            return true;
-        }
         }
 
         // Targeted by Rook or Queen
@@ -658,55 +661,55 @@ class ChessboardNode{
 
         // Targeted by Pawn
         {
-        if(this.turn === 'B'){
-            let x = posx + 1;
-            let y = posy - 1;
-            if(x < 8){
-                if(y >= 0 && this.board[x][y] === 'WP'){
-                    return true;
-                }
-                y = posy + 1;
-                if(y < 8 && this.board[x][y] === 'WP'){
-                    return true;
-                }
-            }
-        }
-        else{
-            let x = posx - 1;
-            let y = posy - 1;
-            if(x >= 0){
-                if(y >= 0 && this.board[x][y] === 'BP'){
-                    return true;
-                }
-                y = posy + 1;
-                if(y < 8 && this.board[x][y] === 'BP'){
-                    return true;
+            if(this.turn === 'B'){
+                let x = posx + 1;
+                let y = posy - 1;
+                if(x < 8){
+                    if(y >= 0 && this.board[x][y] === 'WP'){
+                        return true;
+                    }
+                    y = posy + 1;
+                    if(y < 8 && this.board[x][y] === 'WP'){
+                        return true;
+                    }
                 }
             }
-        }
+            else{
+                let x = posx - 1;
+                let y = posy - 1;
+                if(x >= 0){
+                    if(y >= 0 && this.board[x][y] === 'BP'){
+                        return true;
+                    }
+                    y = posy + 1;
+                    if(y < 8 && this.board[x][y] === 'BP'){
+                        return true;
+                    }
+                }
+            }
         }
 
         // Targeted by Knight
         {
-        for(let v = -1; v < 2; v += 2){
-            for(let h = -1; h < 2; h += 2){
-                let x, y;
-                x = posx + (v * 1);
-                y = posy + (h * 2);
-                if(x >= 0 && x < 8 && y >= 0 && y < 8){
-                    if(this.board[x][y] !== '' && this.board[x][y][0] !== this.turn && this.board[x][y][1] === 'N'){
-                        return true;
+            for(let v = -1; v < 2; v += 2){
+                for(let h = -1; h < 2; h += 2){
+                    let x, y;
+                    x = posx + (v * 1);
+                    y = posy + (h * 2);
+                    if(x >= 0 && x < 8 && y >= 0 && y < 8){
+                        if(this.board[x][y] !== '' && this.board[x][y][0] !== this.turn && this.board[x][y][1] === 'N'){
+                            return true;
+                        }
                     }
-                }
-                x = posx + (v * 2);
-                y = posy + (h * 1);
-                if(x >= 0 && x < 8 && y >= 0 && y < 8){
-                    if(this.board[x][y] !== '' && this.board[x][y][0] !== this.turn && this.board[x][y][1] === 'N'){
-                        return true;
+                    x = posx + (v * 2);
+                    y = posy + (h * 1);
+                    if(x >= 0 && x < 8 && y >= 0 && y < 8){
+                        if(this.board[x][y] !== '' && this.board[x][y][0] !== this.turn && this.board[x][y][1] === 'N'){
+                            return true;
+                        }
                     }
                 }
             }
-        }
         }
         
         // Targeted by King
