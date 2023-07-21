@@ -81,15 +81,22 @@ function openNewSocket(port){
         });
 
         ws.on('close', () =>{
+            console.log("Connection closed");
             clients.delete(ws);
-            if(!clientName) return;
+            //if(!clientName) return;
             for(let client of clients){
                 client.send(`${clientName} DISCONNECTED`);
             }
             if(clients.size === 0){
-                ws.close();
+                console.log("CLOSE");
+                wss.close();
+                for(let i = 0; i < rooms.length; i++){
+                    if(rooms[i] === port){
+                        rooms.splice(i, 1);
+                        break;
+                    }
+                }
             }
-            console.log("Connection closed");
         });
     });
     console.log("CREATED PORT: ", port);
