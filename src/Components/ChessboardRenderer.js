@@ -3,7 +3,11 @@ import React, { useState } from 'react';
 //import ChessboardNode from './scripts/ChessboardLogic.js';
 import RightHandMenu from './RightHandMenu';
 import {Box} from '@mui/material';
+import { PropTypes } from 'prop-types';
 
+ChessboardRenderer.propTypes = {
+    chessboard: PropTypes.object,
+};
 export default function ChessboardRenderer(props) {
 
     const [board, setBoard] = useState(props.chessboard.getBoard());

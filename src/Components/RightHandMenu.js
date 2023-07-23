@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 //import {Link} from 'react-router-dom';
 import './RightHandMenu.css';
+import { PropTypes } from 'prop-types';
 import {
     Box,
     Button,
@@ -16,6 +17,7 @@ import {
 //import ChessboardNode from './scripts/ChessboardLogic';
 
 const drawerWidth = 240;
+
 const RightHandMenu = (props) => {
     const [isMobile, setIsMobile] = useState(window.innerWidth < 1100);
     const [selectedButton, setSelectedButton] = useState('Q');
@@ -110,6 +112,10 @@ const RightHandMenu = (props) => {
             )}
         </Box>
     );
+};
+
+RightHandMenu.propTypes = {
+    chessboard: PropTypes.object,
 };
 
 export default RightHandMenu;
