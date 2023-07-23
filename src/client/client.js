@@ -19,7 +19,7 @@ async function getAvailableRooms(){
         }
     }
     catch(e){
-        body.textContent = "Failed to fetch. Server can not be reached";
+        body.textContent = 'Failed to fetch. Server can not be reached';
     }
 }
 
@@ -36,31 +36,31 @@ function connectToRoom(portNum){
     const socket = new WebSocket(`ws://localhost:${portNum}`);
     console.log(`connected to port ${portNum}`);
 
-    //socket.addEventListener("open", (event) => {
-    //    socket.send("HELLO SERVER!");
+    //socket.addEventListener('open', (event) => {
+    //    socket.send('HELLO SERVER!');
     //});
     
     socket.addEventListener('error', () => {
-        alert("ERROR, Connection Failed");
+        alert('ERROR, Connection Failed');
         getAvailableRooms();
-    })
+    });
 
-    socket.addEventListener("message", (event) => {
-        console.log("message from server: ", event.data);
+    socket.addEventListener('message', (event) => {
+        console.log('message from server: ', event.data);
         chatContent.append(event.data);
         let p = document.createElement('br');
         chatContent.append(p);
     });
 
     socket.addEventListener('close', () => {
-        alert("Server was closed");
+        alert('Server was closed');
         body.removeChild(button);
         socket.close();
-    })
+    });
 
     function onClickSend(){
         socket.send(inputBox.value);
-        inputBox.value = "";
+        inputBox.value = '';
     }
 
     body.textContent = 'Text: ';

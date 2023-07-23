@@ -1,9 +1,13 @@
 import './ChessboardRenderer.css';
-import React, { useEffect, useState } from 'react';
-import ChessboardNode from './scripts/ChessboardLogic.js';
-import RightHandMenu from './RightHandMenu'
-import {Box} from '@mui/material'
+import React, { useState } from 'react';
+//import ChessboardNode from './scripts/ChessboardLogic.js';
+import RightHandMenu from './RightHandMenu';
+import {Box} from '@mui/material';
+import { PropTypes } from 'prop-types';
 
+ChessboardRenderer.propTypes = {
+    chessboard: PropTypes.object,
+};
 export default function ChessboardRenderer(props) {
 
     const [board, setBoard] = useState(props.chessboard.getBoard());
@@ -18,18 +22,18 @@ export default function ChessboardRenderer(props) {
         }
         // get selected piece from board, 
         //  set selected piece from result.
-        setSelectedPiece([...props.chessboard.prevSelectedPos])
+        setSelectedPiece([...props.chessboard.prevSelectedPos]);
         //if selected piece is available, get all valid movements
         if([...props.chessboard.prevSelectedPos].length !== 0) {setValidTiles([...props.chessboard.getValidMovements(xpos,ypos)]);}
         else {
             setValidTiles([]);
         }
-    }
+    };
 
     const isTileValid = (xpos, ypos) => {
         return validTiles.some((tile) => tile[0] === xpos && tile[1] === ypos);
     };
-    
+
     const chessboardRender = () => {
         const chessboardDisplay = [];
         for(let i = 0; i < 8; i++) {
@@ -43,29 +47,30 @@ export default function ChessboardRenderer(props) {
                         key={`${i}${j}`}
                         className="chessboard_cell"
                         style={{backgroundColor: cellColor}}
-                        onClick = {() => {onChessboardPieceClick(i, j)}}
+                        onClick = {() => {onChessboardPieceClick(i, j);}}
                     >
                         {
                             board[i][j] && 
                             (<img src={`imgs/${board[i][j]}.png`} 
-                                alt={"chess cell"}
+                                alt={'chess cell'}
                                 style={
-                                    {height: '69%', 
-                                    width: '69%', 
-                                    pointerEvents: "none", 
-                                    userSelect: "none"
-                                }}
-                                className ="chessboard_piece"
+                                    {
+                                        height: '69%', 
+                                        width: '69%', 
+                                        pointerEvents: 'none', 
+                                        userSelect: 'none'
+                                    }}
+                                className ='chessboard_piece'
                             />)
                         }
-                        {isPieceSelected && <Box className="overlay-circle"></Box>}
-                        {isTileHighlighted && <Box className="valid-move"></Box>}
+                        {isPieceSelected && <Box className='overlay-circle'></Box>}
+                        {isTileHighlighted && <Box className='valid-move'></Box>}
                     </Box>
-                )
+                );
             }
         }
         return chessboardDisplay;
-    }
+    };
 
 
     return (
@@ -73,11 +78,11 @@ export default function ChessboardRenderer(props) {
             style={{ height: '100vh', 
                 overflow: 'auto', 
                 backgroundColor: '#282c34', 
-                display: "flex", 
-                justifyContent: "center"
+                display: 'flex', 
+                justifyContent: 'center'
             }}
         >
-            <Box className="chessboard">
+            <Box className='chessboard'>
                 {chessboardRender()}
             </Box>
             <RightHandMenu chessboard={props.chessboard}/>
