@@ -22,6 +22,24 @@ class ChessboardNode{
         this.findAllValidMoves();
     }
 
+    setBoard(){
+        
+    }
+
+    getBoard(){
+        return {
+            
+        }
+        //ok just get board
+         
+        // return object contains{
+        //      board, 
+        //      turn,
+        //      en passant,
+        //      4 castles,
+        // }
+    }
+
     setPromoteTo(piece){
         this.promoteTo = piece;
     }

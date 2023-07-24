@@ -1,3 +1,4 @@
+import ChessboardNode from '../Components/scripts/ChessboardLogic'
 
 // API:
 const express = require('express');
@@ -13,7 +14,6 @@ const corsOptions = {
 };
 
 app.use(cors(corsOptions));
-
 
 app.get('/create', async (req, res) => {
     let portNum = await findAvaliablePort();
