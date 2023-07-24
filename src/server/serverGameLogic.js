@@ -8,5 +8,3 @@ function testMove(from, to){
     return false;
 }
 
-//
-

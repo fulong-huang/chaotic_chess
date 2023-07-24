@@ -7,18 +7,23 @@ import { PropTypes } from 'prop-types';
 
 ChessboardRenderer.propTypes = {
     chessboard: PropTypes.object,
+    board: PropTypes.array,
+    setBoard: PropTypes.func,
+    socket: PropTypes.object
 };
+
 export default function ChessboardRenderer(props) {
 
-    const [board, setBoard] = useState(props.chessboard.getBoard());
+    // const [board, setBoard] = useState(props.chessboard.getBoard());
     const [selectedPiece, setSelectedPiece] = useState([]);
     const [validTiles, setValidTiles] = useState([]);
-
+    
     const onChessboardPieceClick = (xpos, ypos) => {
-        // if move, get new board
+        // if move is valid, get new board
         if(props.chessboard.selectPiece(xpos, ypos)) {
-            setBoard([...props.chessboard.getBoard()]);
+            props.setBoard([...props.chessboard.getBoard()]);
             setValidTiles([]);
+            props.socket.send('Chess piece moved');//send
         }
         // get selected piece from board, 
         //  set selected piece from result.
@@ -50,8 +55,8 @@ export default function ChessboardRenderer(props) {
                         onClick = {() => {onChessboardPieceClick(i, j);}}
                     >
                         {
-                            board[i][j] && 
-                            (<img src={`imgs/${board[i][j]}.png`} 
+                            props.board[i][j] && 
+                            (<img src={`imgs/${props.board[i][j]}.png`} 
                                 alt={'chess cell'}
                                 style={
                                     {

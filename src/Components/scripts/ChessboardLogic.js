@@ -20,24 +20,42 @@ class ChessboardNode{
         this.avaliableMoves = new Map();
         this.castles = [true, true, true, true];
         this.findAllValidMoves();
+
+        this.setBoardFromMessage(this.getBoardAsMessage());
     }
 
-    setBoard(){
+    setBoardFromMessage(boardMessage){
+        let newBoard = [], splitBoard = boardMessage.split(',');
+        for(let i = 0; i < 64; i += 8){
+            newBoard.push(splitBoard.slice(i, i + 8));
+        } 
+        this.turn = splitBoard[64];
+        for(let i = 65; i < 69; i++){
+            this.castles[i - 65] = splitBoard[i];
+        }
+        console.log(newBoard);
+        console.log(splitBoard.slice(64, splitBoard.size));
+
+        console.log(this.turn, this.castles);
         
     }
 
-    getBoard(){
-        return {
-            
-        }
-        //ok just get board
-         
+    getBoardAsMessage(){
         // return object contains{
         //      board, 
         //      turn,
         //      en passant,
         //      4 castles,
         // }
+        let result = this.board.toString();
+        result += ',';
+        result += this.turn;
+
+        for(let i = 0; i < 4; i++){
+            result += ',';
+            result += this.castles[i]? 1 : 0;
+        }
+        return result;
     }
 
     setPromoteTo(piece){
