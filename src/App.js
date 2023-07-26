@@ -45,7 +45,6 @@ function App() {
     const [validTiles, setValidTiles] = useState([]);
 
     useEffect(() => {
-        console.log('This should be only printed once');
         if(count > 0) return;
         count++;
         socket.addEventListener('message', (msg) => {
@@ -53,19 +52,17 @@ function App() {
             // console.log(msg.data);
             let msgType = msg.data[0];
             let msgData = msg.data.substr(1);
-            console.log(msgData);
+            console.log('Msg: ', msgData);
             switch(msgType) {
             case 'M': // move
                 //if move, get ChessboardLogic to move piece
                 //  move only have 1122, no Q
-                console.log([Number(msgData[0]), Number(msgData[1])]);
                 chessboard.prevSelectedPos = [Number(msgData[0]), Number(msgData[1])];
                 chessboard.move(Number(msgData[0]), Number(msgData[1]), 
                     Number(msgData[2]), Number(msgData[3]));
                 chessboard.findAllValidMoves();
                 setBoard([...chessboard.getBoard()]);
                 chessboard.prevSelectedPos = [];
-                console.log('serboard');
                 break;
             case 'B': // board (req/send)
                 break;

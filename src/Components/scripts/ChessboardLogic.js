@@ -33,11 +33,6 @@ class ChessboardNode{
         for(let i = 65; i < 69; i++){
             this.castles[i - 65] = splitBoard[i];
         }
-        console.log(newBoard);
-        console.log(splitBoard.slice(64, splitBoard.size));
-
-        console.log(this.turn, this.castles);
-        
     }
 
     getBoardAsMessage(){
@@ -293,7 +288,7 @@ class ChessboardNode{
                     if(this.castles[queenSideCastle] &&
                         this.board[i][j - 1] === '' &&
                         this.board[i][j - 2] === '' &&
-                        this.board[i][j - 3] === '' &&
+                        //this.board[i][j - 3] === '' &&
                         ! this.squareUnderAttack(i, j) && 
                         ! this.squareUnderAttack(i, j - 1) &&
                         ! this.squareUnderAttack(i, j - 2)){
@@ -303,7 +298,8 @@ class ChessboardNode{
                         this.board[i][j + 1] === '' &&
                         this.board[i][j + 2] === '' &&
                         ! this.squareUnderAttack(i, j) && 
-                        ! this.squareUnderAttack(i, j - 1)){
+                        ! this.squareUnderAttack(i, j + 1) && 
+                        ! this.squareUnderAttack(i, j + 2)){
                         movesFound.push([i, j + 2]);
                     }
                     break;
@@ -463,7 +459,6 @@ class ChessboardNode{
     movePawn(curX, curY, tarX, tarY){
         let rowDiff = Math.abs(tarX - curX);
         if(curY !== tarY && this.board[tarX][tarY] === ''){
-            console.log(curX, tarY);
             this.board[curX][tarY] = '';
         }
         if(tarX === 0 || tarX === 7){
