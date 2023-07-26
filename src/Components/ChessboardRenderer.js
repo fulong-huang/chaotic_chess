@@ -1,7 +1,7 @@
 import './ChessboardRenderer.css';
 import React, { useState } from 'react';
 //import ChessboardNode from './scripts/ChessboardLogic.js';
-import RightHandMenu from './RightHandMenu';
+import RightHandMenu from './RightHandMenu.js';
 import {Box} from '@mui/material';
 import { PropTypes } from 'prop-types';
 
@@ -9,34 +9,41 @@ ChessboardRenderer.propTypes = {
     chessboard: PropTypes.object,
     board: PropTypes.array,
     setBoard: PropTypes.func,
-    socket: PropTypes.object
+    socket: PropTypes.object,
+    validTiles: PropTypes.array,
+    setValidTiles: PropTypes.func,
 };
 
 export default function ChessboardRenderer(props) {
 
     // const [board, setBoard] = useState(props.chessboard.getBoard());
     const [selectedPiece, setSelectedPiece] = useState([]);
-    const [validTiles, setValidTiles] = useState([]);
     
     const onChessboardPieceClick = (xpos, ypos) => {
         // if move is valid, get new board
         if(props.chessboard.selectPiece(xpos, ypos)) {
-            props.setBoard([...props.chessboard.getBoard()]);
-            setValidTiles([]);
-            props.socket.send('Chess piece moved');//send
+            let msg = 'M';
+            msg += selectedPiece[0].toString();
+            msg += selectedPiece[1].toString();
+            msg += xpos.toString();
+            msg += ypos.toString();
+            props.socket.send(msg);
+            //props.setBoard([...props.chessboard.getBoard()]);
+            console.log('setboard======');
+            props.setValidTiles([]);
         }
         // get selected piece from board, 
         //  set selected piece from result.
         setSelectedPiece([...props.chessboard.prevSelectedPos]);
         //if selected piece is available, get all valid movements
-        if([...props.chessboard.prevSelectedPos].length !== 0) {setValidTiles([...props.chessboard.getValidMovements(xpos,ypos)]);}
+        if([...props.chessboard.prevSelectedPos].length !== 0) {props.setValidTiles([...props.chessboard.getValidMovements(xpos,ypos)]);}
         else {
-            setValidTiles([]);
+            props.setValidTiles([]);
         }
     };
 
     const isTileValid = (xpos, ypos) => {
-        return validTiles.some((tile) => tile[0] === xpos && tile[1] === ypos);
+        return props.validTiles.some((tile) => tile[0] === xpos && tile[1] === ypos);
     };
 
     const chessboardRender = () => {
