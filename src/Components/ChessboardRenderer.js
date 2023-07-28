@@ -86,18 +86,21 @@ export default function ChessboardRenderer(props) {
 
 
     return (
-        <Box
-            style={{ height: '100vh', 
-                overflow: 'auto', 
-                backgroundColor: '#282c34', 
-                display: 'flex', 
-                justifyContent: 'center'
-            }}
-        >
-            <Box className='chessboard'>
-                {chessboardRender()}
+        <>
+            <button onClick={()=>{props.socket.send('B');}}> Request Board </button>
+            <Box
+                style={{ height: '100vh', 
+                    overflow: 'auto', 
+                    backgroundColor: '#282c34', 
+                    display: 'flex', 
+                    justifyContent: 'center'
+                }}
+            >
+                <Box className='chessboard'>
+                    {chessboardRender()}
+                </Box>
+                <RightHandMenu chessboard={props.chessboard}/>
             </Box>
-            <RightHandMenu chessboard={props.chessboard}/>
-        </Box>
+        </>
     );
 }

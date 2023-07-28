@@ -21,7 +21,7 @@ class ChessboardNode{
         this.castles = [true, true, true, true];
         this.findAllValidMoves();
 
-        this.setBoardFromMessage(this.getBoardAsMessage());
+        //this.setBoardFromMessage(this.getBoardAsMessage());
     }
 
     setBoardFromMessage(boardMessage){
@@ -29,10 +29,13 @@ class ChessboardNode{
         for(let i = 0; i < 64; i += 8){
             newBoard.push(splitBoard.slice(i, i + 8));
         } 
+        this.board = newBoard;
         this.turn = splitBoard[64];
         for(let i = 65; i < 69; i++){
-            this.castles[i - 65] = splitBoard[i];
+            this.castles[i - 65] = splitBoard[i] === '1';
         }
+        console.log(this.castles);
+        this.findAllValidMoves();
     }
 
     getBoardAsMessage(){

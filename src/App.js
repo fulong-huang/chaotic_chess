@@ -64,8 +64,11 @@ function App() {
                 setBoard([...chessboard.getBoard()]);
                 chessboard.prevSelectedPos = [];
                 break;
-            case 'B': // board (req/send)
+            case 'B':{ // board (req/send)
+                chessboard.setBoardFromMessage(msgData);
+                setBoard([...chessboard.getBoard()]);
                 break;
+            }
             case 'S': // start
                 break;            
             // client will send 'N', not receive

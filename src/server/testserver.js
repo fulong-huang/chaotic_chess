@@ -7,6 +7,10 @@ import {WebSocketServer} from 'ws';
 const portNum = 3001;
 const wss = new WebSocketServer({port: portNum});
 const clients = new Set();
+// TODO: 
+//  NOT const, should be modifiable
+const cooldownTime = 3000;
+const maxMoveHold = 3;
 
 // possibly timeout 10(?) seconds to check if any client connected, 
 //  if no clients are in the room then close it immediately\
@@ -14,6 +18,9 @@ const clients = new Set();
 //  New one;
 const chessboard = new ChessboardNode();
 wss.on('connection', (ws) => {
+    let savedCDTime = 0;
+    let lastCommandTime = Date.now();
+    ws.send('B' + chessboard.getBoardAsMessage());
     clients.add(ws);
     console.log(`Port: ${portNum}, New Connection, currently ${clients.size} online`);
     ws.send('wWelcome');
@@ -25,6 +32,21 @@ wss.on('connection', (ws) => {
         console.log('data:', msgData);
         switch(msgType) {
         case 'M':{ // move
+            // validate Cooldown:
+            const currTime = Date.now();
+            savedCDTime += currTime - lastCommandTime;
+            lastCommandTime = currTime;
+
+            if(savedCDTime > cooldownTime * maxMoveHold){
+                savedCDTime = cooldownTime * maxMoveHold;
+            }
+            if(savedCDTime < cooldownTime){
+                ws.send('ECooldown Not Finished');
+                return;
+            }
+            savedCDTime -= cooldownTime;
+
+            // Validate Move:
             let fromX = Number(msgData[0]);
             let fromY = Number(msgData[1]);
             let toX = Number(msgData[2]);
@@ -37,15 +59,17 @@ wss.on('connection', (ws) => {
             chessboard.move(fromX, fromY, toX, toY);
             chessboard.findAllValidMoves();
             
-            // No Validation
+            // Send client moves
             for(let client of clients) {
                 client.send(message);
             }
             // console.log("")
             break;
         }
-        case 'B': // board (req/send)
+        case 'B':{ // board (req/send)
+            ws.send('B' + chessboard.getBoardAsMessage());
             break;
+        }
         case 'S': // start
             break;
         case 'N': // client's name                
