@@ -88,6 +88,7 @@ export default function ChessboardRenderer(props) {
     return (
         <>
             <button onClick={()=>{props.socket.send('B');}}> Request Board </button>
+            <button onClick={()=>{props.socket.send('S');}}> Restart </button>
             <Box
                 style={{ height: '100vh', 
                     overflow: 'auto', 

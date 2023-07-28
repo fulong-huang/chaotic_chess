@@ -24,6 +24,28 @@ class ChessboardNode{
         //this.setBoardFromMessage(this.getBoardAsMessage());
     }
 
+
+    resetBoard(){
+        this.board = [
+            ['BR', 'BN', 'BB', 'BQ', 'BK', 'BB', 'BN', 'BR'],
+            ['BP', 'BP', 'BP', 'BP', 'BP', 'BP', 'BP', 'BP'],
+            ['',   '',   '',   '',   '',   '',   '',   ''],
+            ['',   '',   '',   '',   '',   '',   '',   ''],
+            ['',   '',   '',   '',   '',   '',   '',   ''],
+            ['',   '',   '',   '',   '',   '',   '',   ''],
+            ['WP', 'WP', 'WP', 'WP', 'WP', 'WP', 'WP', 'WP'],
+            ['WR', 'WN', 'WB', 'WQ', 'WK', 'WB', 'WN', 'WR'],
+        ];
+
+        this.prevSelectedPos = [];
+        this.turn = 'W';
+        this.enPassant = [];
+        this.promoteTo = 'Q';
+        this.avaliableMoves = new Map();
+        this.castles = [true, true, true, true];
+        this.findAllValidMoves();
+    }
+
     setBoardFromMessage(boardMessage){
         let newBoard = [], splitBoard = boardMessage.split(',');
         for(let i = 0; i < 64; i += 8){

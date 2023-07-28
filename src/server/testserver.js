@@ -7,6 +7,7 @@ import {WebSocketServer} from 'ws';
 const portNum = 3001;
 const wss = new WebSocketServer({port: portNum});
 const clients = new Set();
+const clientInfos = new Map();
 // TODO: 
 //  NOT const, should be modifiable
 const cooldownTime = 3000;
@@ -17,9 +18,15 @@ const maxMoveHold = 3;
 // I need chessboard
 //  New one;
 const chessboard = new ChessboardNode();
+
+let first = true;
 wss.on('connection', (ws) => {
-    let savedCDTime = 0;
-    let lastCommandTime = Date.now();
+    clientInfos.set(ws, {
+        serverOwner: first,
+        savedCDTime : 0,
+        lastCommandTime : Date.now(),
+    });
+    first = false;
     ws.send('B' + chessboard.getBoardAsMessage());
     clients.add(ws);
     console.log(`Port: ${portNum}, New Connection, currently ${clients.size} online`);
@@ -34,17 +41,17 @@ wss.on('connection', (ws) => {
         case 'M':{ // move
             // validate Cooldown:
             const currTime = Date.now();
-            savedCDTime += currTime - lastCommandTime;
-            lastCommandTime = currTime;
+            clientInfos.get(ws).savedCDTime += currTime - clientInfos.get(ws).lastCommandTime;
+            clientInfos.get(ws).lastCommandTime = currTime;
 
-            if(savedCDTime > cooldownTime * maxMoveHold){
-                savedCDTime = cooldownTime * maxMoveHold;
+            if(clientInfos.get(ws).savedCDTime > cooldownTime * maxMoveHold){
+                clientInfos.get(ws).savedCDTime = cooldownTime * maxMoveHold;
             }
-            if(savedCDTime < cooldownTime){
+            if(clientInfos.get(ws).savedCDTime < cooldownTime){
                 ws.send('ECooldown Not Finished');
                 return;
             }
-            savedCDTime -= cooldownTime;
+            clientInfos.get(ws).savedCDTime -= cooldownTime;
 
             // Validate Move:
             let fromX = Number(msgData[0]);
@@ -70,15 +77,23 @@ wss.on('connection', (ws) => {
             ws.send('B' + chessboard.getBoardAsMessage());
             break;
         }
-        case 'S': // start
+        case 'S':{ // start
+            chessboard.resetBoard();
+            const currTime = Date.now();
+            for(let client of clients){
+                client.send('B' + chessboard.getBoardAsMessage());
+                clientInfos.get(client).lastCommandTime = currTime;
+                clientInfos.get(client).savedCDTime = 0;
+            }
             break;
+        }
         case 'N': // client's name                
             break;
         // Server will send 'T' to client, not receive
         // case 'T': // team
         //     break;
-        case 'C': // cooldown
-            break;
+//        case 'C': // cooldown
+//            break;
         }
         console.log('Received Message', message);
     });
@@ -86,20 +101,19 @@ wss.on('connection', (ws) => {
     ws.on('close', () =>{
         console.log('Connection closed');
         clients.delete(ws);
-        // //if(!clientName) return;
-        // for(let client of clients){
-        //     client.send(`${clientName} DISCONNECTED`);
-        // }
-        // if(clients.size === 0){
-        //     console.log('CLOSE');
-        //     wss.close();
-        //     for(let i = 0; i < rooms.length; i++){
-        //         if(rooms[i] === portNum){
-        //             rooms.splice(i, 1);
-        //             break;
-        //         }
-        //     }
-        // }
+        if(clientInfos.get(ws).serverOwner){
+            // if owner left the room, either:
+            //  - close the room
+            //  OR
+            //  - pass owner to another player;
+            
+            // CURR: close all connection and room
+            for(let client of clients){
+                client.send('EServer owner left the room, Server closed');
+                client.close();
+            }
+            wss.close();
+        }
     });
 
     // ws.on('Chess piece moved')
