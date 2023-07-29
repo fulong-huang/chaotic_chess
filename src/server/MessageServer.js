@@ -1,4 +1,4 @@
-// const ChessboardNode = require("./ChessboardLogic.js");
+//Handles all socket communication for the server
 
 // const ws = new require('ws');
 import ChessboardNode from '../Components/scripts/ChessboardLogic.js';
@@ -98,23 +98,23 @@ wss.on('connection', (ws) => {
         console.log('Received Message', message);
     });
 
-    // ws.on('close', () =>{
-    //     console.log('Connection closed');
-    //     clients.delete(ws);
-    //     if(clientInfos.get(ws).serverOwner){
-    //         // if owner left the room, either:
-    //         //  - close the room
-    //         //  OR
-    //         //  - pass owner to another player;
+    ws.on('close', () =>{
+        console.log('Connection closed');
+        clients.delete(ws);
+        if(clientInfos.get(ws).serverOwner){
+            // if owner left the room, either:
+            //  - close the room
+            //  OR
+            //  - pass owner to another player;
             
-    //         // CURR: close all connection and room
-    //         for(let client of clients){
-    //             client.send('EServer owner left the room, Server closed');
-    //             client.close();
-    //         }
-    //         wss.close();
-    //     }
-    // });
+            // CURR: close all connection and room
+            for(let client of clients){
+                client.send('EServer owner left the room, Server closed');
+                client.close();
+            }
+            wss.close();
+        }
+    });
 
     // ws.on('Chess piece moved')
 });
