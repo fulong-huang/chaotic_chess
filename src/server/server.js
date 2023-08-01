@@ -1,3 +1,4 @@
+// import ChessboardNode from '../Components/scripts/ChessboardLogic'
 
 // API:
 const express = require('express');
@@ -13,7 +14,6 @@ const corsOptions = {
 };
 
 app.use(cors(corsOptions));
-
 
 app.get('/create', async (req, res) => {
     let portNum = await findAvaliablePort();
@@ -49,8 +49,8 @@ async function findAvaliablePort(){
     return await portscanner.findAPortNotInUse(startPort, endPort, '127.0.0.1');
 }
 
-function openNewSocket(port){
-    const wss = new ws.Server({port: port});
+function openNewSocket(portNum){
+    const wss = new ws.Server({port: portNum});
 
     const clients = new Set();
 
@@ -59,7 +59,7 @@ function openNewSocket(port){
 
     wss.on('connection', (ws) => {
         clients.add(ws);
-        console.log(`Port: ${port}, New Connection, currently ${clients.size} online`);
+        console.log(`Port: ${portNum}, New Connection, currently ${clients.size} online`);
         ws.send('Welcome');
 
         let clientName;
@@ -93,7 +93,7 @@ function openNewSocket(port){
                 console.log('CLOSE');
                 wss.close();
                 for(let i = 0; i < rooms.length; i++){
-                    if(rooms[i] === port){
+                    if(rooms[i] === portNum){
                         rooms.splice(i, 1);
                         break;
                     }
@@ -101,6 +101,5 @@ function openNewSocket(port){
             }
         });
     });
-    console.log('CREATED PORT: ', port);
+    console.log('CREATED PORT: ', portNum);
 }
-

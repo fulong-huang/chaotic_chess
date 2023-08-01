@@ -48,7 +48,7 @@ function connectToRoom(portNum){
     socket.addEventListener('message', (event) => {
         console.log('message from server: ', event.data);
         chatContent.append(event.data);
-        let p = document.createElement('br');
+        let p = document.createElement('br')    ;
         chatContent.append(p);
     });
 

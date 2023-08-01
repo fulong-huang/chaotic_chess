@@ -1,18 +1,15 @@
 class ChessboardNode{
-    constructor(board = [
-        ['BR', 'BN', 'BB', 'BQ', 'BK', '', '', 'BR'],
-        // ['BP', 'BP', 'BP', 'BP', 'BP', 'BP', 'BP', 'BP'],
-        ['BP', 'BP', 'BP', '', '', '', '', ''],
-        ['',   '',   '',   '',   '',   '',   '',   ''],
-        ['',   '',   '',   'WP',   '',   '',   '',   ''],
-        ['',   '',   '',   '',   '',   '',   '',   ''],
-        ['',   '',   '',   '',   '',   '',   '',   ''],
-        ['WP', 'WP', 'WP', '', '', '', '', ''],
-        ['WR', 'WN', 'WB', 'WQ', 'WK', '', '', 'WR'],
-        // ['WP', 'WP', 'WP', 'WP', 'WP', 'WP', 'WP', 'WP'],
-        // ['WR', 'WN', 'WB', 'WQ', 'WK', 'WB', 'WN', 'WR'],
-    ]){
-        this.board = board;
+    constructor(){
+        this.board = [
+            ['BR', 'BN', 'BB', 'BQ', 'BK', 'BB', 'BN', 'BR'],
+            ['BP', 'BP', 'BP', 'BP', 'BP', 'BP', 'BP', 'BP'],
+            ['',   '',   '',   '',   '',   '',   '',   ''],
+            ['',   '',   '',   '',   '',   '',   '',   ''],
+            ['',   '',   '',   '',   '',   '',   '',   ''],
+            ['',   '',   '',   '',   '',   '',   '',   ''],
+            ['WP', 'WP', 'WP', 'WP', 'WP', 'WP', 'WP', 'WP'],
+            ['WR', 'WN', 'WB', 'WQ', 'WK', 'WB', 'WN', 'WR'],
+        ];
         this.prevSelectedPos = [];
         this.turn = 'W';
         this.enPassant = [];
@@ -20,6 +17,62 @@ class ChessboardNode{
         this.avaliableMoves = new Map();
         this.castles = [true, true, true, true];
         this.findAllValidMoves();
+
+        //this.setBoardFromMessage(this.getBoardAsMessage());
+    }
+
+
+    resetBoard(){
+        this.board = [
+            ['BR', 'BN', 'BB', 'BQ', 'BK', 'BB', 'BN', 'BR'],
+            ['BP', 'BP', 'BP', 'BP', 'BP', 'BP', 'BP', 'BP'],
+            ['',   '',   '',   '',   '',   '',   '',   ''],
+            ['',   '',   '',   '',   '',   '',   '',   ''],
+            ['',   '',   '',   '',   '',   '',   '',   ''],
+            ['',   '',   '',   '',   '',   '',   '',   ''],
+            ['WP', 'WP', 'WP', 'WP', 'WP', 'WP', 'WP', 'WP'],
+            ['WR', 'WN', 'WB', 'WQ', 'WK', 'WB', 'WN', 'WR'],
+        ];
+
+        this.prevSelectedPos = [];
+        this.turn = 'W';
+        this.enPassant = [];
+        this.promoteTo = 'Q';
+        this.avaliableMoves = new Map();
+        this.castles = [true, true, true, true];
+        this.findAllValidMoves();
+    }
+
+    setBoardFromMessage(boardMessage){
+        let newBoard = [], splitBoard = boardMessage.split(',');
+        for(let i = 0; i < 64; i += 8){
+            newBoard.push(splitBoard.slice(i, i + 8));
+        } 
+        this.board = newBoard;
+        this.turn = splitBoard[64];
+        for(let i = 65; i < 69; i++){
+            this.castles[i - 65] = splitBoard[i] === '1';
+        }
+        console.log(this.castles);
+        this.findAllValidMoves();
+    }
+
+    getBoardAsMessage(){
+        // return object contains{
+        //      board, 
+        //      turn,
+        //      en passant,
+        //      4 castles,
+        // }
+        let result = this.board.toString();
+        result += ',';
+        result += this.turn;
+
+        for(let i = 0; i < 4; i++){
+            result += ',';
+            result += this.castles[i]? 1 : 0;
+        }
+        return result;
     }
 
     setPromoteTo(piece){
@@ -257,7 +310,7 @@ class ChessboardNode{
                     if(this.castles[queenSideCastle] &&
                         this.board[i][j - 1] === '' &&
                         this.board[i][j - 2] === '' &&
-                        this.board[i][j - 3] === '' &&
+                        //this.board[i][j - 3] === '' &&
                         ! this.squareUnderAttack(i, j) && 
                         ! this.squareUnderAttack(i, j - 1) &&
                         ! this.squareUnderAttack(i, j - 2)){
@@ -267,7 +320,8 @@ class ChessboardNode{
                         this.board[i][j + 1] === '' &&
                         this.board[i][j + 2] === '' &&
                         ! this.squareUnderAttack(i, j) && 
-                        ! this.squareUnderAttack(i, j - 1)){
+                        ! this.squareUnderAttack(i, j + 1) && 
+                        ! this.squareUnderAttack(i, j + 2)){
                         movesFound.push([i, j + 2]);
                     }
                     break;
@@ -280,6 +334,14 @@ class ChessboardNode{
                 }
             }
         }
+    }
+
+    checkMove(fromX, fromY, toX, toY){
+        let moveIdx = fromX * 8 + fromY;
+        return this.avaliableMoves.get(moveIdx) &&
+        this.avaliableMoves.get(moveIdx).some(inner =>
+            inner.every((element, index) => element === [toX, toY][index])
+        );
     }
 
     selectPiece(xpos, ypos){
@@ -310,31 +372,31 @@ class ChessboardNode{
                 inner.every((element, index) => element === [xpos, ypos][index])
             );
 
-        if(isValidMove){
-            this.move(xpos, ypos);
-            this.findAllValidMoves();
-            if(this.avaliableMoves.size === 0){
-                if(this.kingUnderCheck()){
-                    alert('CHECK MATE, current turn: ' + this.turn);
-                }
-                else{
-                    alert('STALE MATE');
-                }
-            }
-        }
+        //        if(isValidMove){
+        //            this.move(xpos, ypos);
+        //            this.findAllValidMoves();
+        //            if(this.avaliableMoves.size === 0){
+        //                if(this.kingUnderCheck()){
+        //                    alert('CHECK MATE, current turn: ' + this.turn);
+        //                }
+        //                else{
+        //                    alert('STALE MATE');
+        //                }
+        //            }
+        //        }
         this.prevSelectedPos = [];
         return isValidMove;
     }
 
-    move(tarX, tarY){
-        const [curX, curY] = this.prevSelectedPos;
+    move(curX, curY, tarX, tarY){
+        console.log('move');
         let curPiece = this.board[curX][curY][1];
         switch(curPiece){
         case 'P':
-            this.movePawn(tarX, tarY);
+            this.movePawn(curX, curY, tarX, tarY);
             break;
         case 'K':
-            this.moveKing(tarX, tarY);
+            this.moveKing(curX, curY, tarX, tarY);
             break;
         default: // Rook, Knight, Bishop, Queen.
             this.board[tarX][tarY] = this.board[curX][curY];
@@ -342,32 +404,52 @@ class ChessboardNode{
             this.enPassant = [];
         }
         if(this.turn === 'W'){
-            if(curX === 7 && curY === 0){
-                this.castles[2] = false;
+            if(curX === 7){
+                if(curY === 0){
+                    this.castles[2] = false;
+                }
+                else if(curY === 7){
+                    this.castles[3] = false;
+                }
+                else if(curY == 4){
+                    this.castles[2] = this.castles[3] = false;
+                }
             }
-            else if(tarX === 7 && tarY === 0){
-                this.castles[2] = false;
-            }
-            if(curX === 7 && curY === 7){
-                this.castles[3] = false;
-            }
-            else if(tarX === 7 && tarY === 7){
-                this.castles[3] = false;
+            else if(tarX === 0){
+                if(tarY === 0){
+                    this.castles[2] = false;
+                }
+                else if(tarY === 7){
+                    this.castles[3] = false;
+                }
+                else if(tarY == 4){
+                    this.castles[2] = this.castles[3] = false;
+                }
             }
             this.turn = 'B';
         }
         else{
-            if(curX === 0 && curY === 0){
-                this.castles[0] = false;
+            if(curX === 0){
+                if(curY === 0){
+                    this.castles[0] = false;
+                }
+                else if(curY === 7){
+                    this.castles[1] = false;
+                }
+                else if(curY == 4){
+                    this.castles[0] = this.castles[1] = false;
+                }
             }
-            else if(tarX === 0 && tarY === 0){
-                this.castles[0] = false;
-            }
-            if(curX === 0 && curY === 7){
-                this.castles[1] = false;
-            }
-            else if(tarX === 0 && tarY === 7){
-                this.castles[1] = false;
+            else if(tarX === 0){
+                if(tarY === 0){
+                    this.castles[0] = false;
+                }
+                else if(tarY === 7){
+                    this.castles[1] = false;
+                }
+                else if(tarY == 4){
+                    this.castles[0] = this.castles[1] = false;
+                }
             }
             this.turn = 'W';
         }
@@ -376,8 +458,7 @@ class ChessboardNode{
         }
     }
 
-    moveKing(tarX, tarY){
-        const [curX, curY] = this.prevSelectedPos;
+    moveKing(curX, curY, tarX, tarY){
         let colDiff = Math.abs(tarY - curY);
         if(colDiff === 2){
             if(tarY === 2){
@@ -397,8 +478,7 @@ class ChessboardNode{
         }
     }
 
-    movePawn(tarX, tarY){
-        const [curX, curY] = this.prevSelectedPos;
+    movePawn(curX, curY, tarX, tarY){
         let rowDiff = Math.abs(tarX - curX);
         if(curY !== tarY && this.board[tarX][tarY] === ''){
             this.board[curX][tarY] = '';

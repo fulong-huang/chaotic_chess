@@ -1,24 +1,20 @@
-// import logo from './logo.svg';
-// import './App.css';
-// import React, {useState, useEffect} from 'react'
+
 import React from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-
-import ChessboardNode from './Components/scripts/ChessboardLogic';
-import ChessboardRenderer from './Components/ChessboardRenderer'; 
-import Lobby from './Components/Lobby';
-
-
-
-const chessboard = new ChessboardNode();
+import ChessboardRenderer from './Components/ChessboardRenderer.js';
+import Lobby from './Components/Lobby.js';
 
 function App() {
-
+    // create client and stuff (returned from lobby)
+    //    pass in setBoard to your thing
+    //    since setBoard is hooked to the board, updating board using setBoard
+    //          will also update your display
     return (
         <BrowserRouter>
             <Routes>
-                <Route path="/" element = {<ChessboardRenderer chessboard={chessboard}/>}/>
-                <Route path="/lobby" element = {<Lobby/>} />
+                <Route path="/" element={<ChessboardRenderer
+                />} />
+                <Route path="/lobby" element={<Lobby />} />
             </Routes>
         </BrowserRouter>
     );
