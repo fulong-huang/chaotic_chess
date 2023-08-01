@@ -12,8 +12,7 @@ function App() {
     return (
         <BrowserRouter>
             <Routes>
-                <Route path="/" element={<ChessboardRenderer
-                />} />
+                <Route path="/" element={<ChessboardRenderer/>} />
                 <Route path="/lobby" element={<Lobby />} />
             </Routes>
         </BrowserRouter>

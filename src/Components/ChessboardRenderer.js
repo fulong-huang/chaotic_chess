@@ -2,6 +2,7 @@ import './ChessboardRenderer.css';
 import React, { useState, useEffect} from 'react';
 //import ChessboardNode from './scripts/ChessboardLogic.js';
 import RightHandMenu from './RightHandMenu.js';
+import CooldownBar from './CooldownBar.js';
 import {Box} from '@mui/material';
 import MessageClient, { chessboard } from '../client/MessageClient.js';
 
@@ -19,20 +20,32 @@ let count = 0;
 // const sendMessageToServer = new MessageClient(chessboard, setBoard);
 
 export default function ChessboardRenderer() {
-    // const [board, setBoard] = useState(props.chessboard.getBoard());
     const [board, setBoard] = useState(chessboard.getBoard());
     const [selectedPiece, setSelectedPiece] = useState([]);
     const [validTiles, setValidTiles] = useState([]);
+    const [cooldown, setCooldown] = useState(chessboard.getCooldown());
 
     useEffect(() => {
         if(count > 0) return;
         count++;
         socket = new MessageClient(setBoard);
-    }, []);
+        // socket.send('t0');
+        // socket.send('C3000');
+        // socket.send('P5');
+        // setCooldownTime(chessboard.getCooldownTime());
+        // console.log('Current Cooldown Time: ' + chessboard.getCooldownTime());
+        // setCooldown(chessboard.getCooldown());
+        // console.log('Current Cooldown: ' + chessboard.getCooldown());
+        // setMaxMoveHold(chessboard.getMaxMoveHold());
+        // console.log('Current Max Hold: ' + chessboard.getMaxMoveHold());
+    }, []); 
 
     const onChessboardPieceClick = (xpos, ypos) => {
         // if move is valid, get new board
         // if(props.chessboard.selectPiece(xpos, ypos)) {
+        // socket.send('t0');
+        // socket.send('C3000');
+        // socket.send('P5');
         if(chessboard.selectPiece(xpos, ypos)) {
             let msg = 'M';
             msg += selectedPiece[0].toString();
@@ -44,6 +57,10 @@ export default function ChessboardRenderer() {
             setBoard([...chessboard.getBoard()]);
             // console.log('setboard======');
             // props.setValidTiles([]);
+            if(chessboard.getCooldown() >= 1) {
+                socket.send('t' + (chessboard.getCooldown()-1).toString());
+                setCooldown(chessboard.getCooldown()-1);
+            }
             setValidTiles([]);
         }
         // get selected piece from board, 
@@ -121,13 +138,24 @@ export default function ChessboardRenderer() {
                     overflow: 'auto', 
                     backgroundColor: '#282c34', 
                     display: 'flex', 
-                    justifyContent: 'center'
+                    flexDirection: 'column',
+                    alignItems: 'center'
                 }}
             >
+                <Box                        
+                    style={{
+                        width: '100%',
+                        display: 'flex',
+                        justifyContent: 'center',
+                        flexDirection: 'column',
+                    }}
+                    className='cooldownbar'
+                >
+                    <CooldownBar chessboard={chessboard} cooldown={cooldown} setCooldown = {setCooldown}/>
+                </Box>                
                 <Box className='chessboard'>
                     {chessboardRender()}
                 </Box>
-                {/* <RightHandMenu chessboard={props.chessboard}/> */}
                 <RightHandMenu chessboard={chessboard}/>
             </Box>
         </>

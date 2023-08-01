@@ -8,6 +8,10 @@
     padding-top: 100px;
 }
 
+/* .cooldownbar {
+    width: '800px'
+} */
+
 .chessboard_cell {
     display:flex;
     justify-content: center;
@@ -47,7 +51,9 @@
         max-width: 300px;
         max-height: 300px;
     }
-
+    .cooldownbar {
+        max-width: 300px;
+    }
     .chessboard_cell {
         width: 37.5px;
         height: 37.5px;
@@ -59,7 +65,9 @@
         max-width: 600px;
         max-height: 600px;
     }
-
+    .cooldownbar {
+        max-width: 600px;
+    }
     .chessboard_cell {
         width: 75px;
         height: 75px;
@@ -71,7 +79,9 @@
         max-width: 800px;
         max-height: 800px;
     }
-
+    .cooldownbar {
+        max-width: 800px;
+    }
     .chessboard_cell {
         width: 100px;
         height: 100px;
