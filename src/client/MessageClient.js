@@ -30,7 +30,7 @@ socket.addEventListener('close', () => {
 
 export default function MessageClient(setBoard) {
     // const [board, setBoard] = useState(tempboard.getBoard());
-    // const sendMessageToServer = (msg) => {z
+    // const sendMessageToServer = (msg) => {
     socket.addEventListener('message', (msg) => {
         // msg.data: message (string) send by the server
         // console.log(msg.data);
@@ -62,22 +62,16 @@ export default function MessageClient(setBoard) {
             break;
         case 't': { // cooldown
             // TODO: set current cooldown to received value;
-            chessboard.setCooldown(Number(msgData));
-            // setCooldown(Number(msgData));
-            // console.log('Current Cooldown is set to: ', chessboard.getCooldownTime());
+            console.log('Cooldown Received: ' , Number(msgData));
+            console.log('RECEIVED COOLDOWN');
             break;
         }
         case 'C':{
-            // TODO: set current cooldown to received value;
-            chessboard.setCooldownTime(Number(msgData));
-            // setCooldownTime(Number(msgData));
-            // console.log('Current Cooldown is set to: ', chessboard.getCooldown());
+            console.log('Current Cooldown is set to: ', Number(msgData));
             break;
         }
         case 'P':{
-            chessboard.setMaxMoveHold(Number(msgData));
-            // setMaxMoveHold(Number(msgData));
-            // console.log('Current Max Hold is set to: ', chessboard.getMaxMoveHold());
+            console.log(`Currently can only hold ${Number(msgData)} movement points`);
             break;
         }
         }

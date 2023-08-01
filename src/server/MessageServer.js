@@ -10,8 +10,8 @@ const clients = new Set();
 const clientInfos = new Map();
 // TODO: 
 //  NOT const, should be modifiable
-let cooldownTime = 3000;
-let maxMoveHold = 3;
+const cooldownTime = 3000;
+const maxMoveHold = 3;
 
 // possibly timeout 10(?) seconds to check if any client connected, 
 //  if no clients are in the room then close it immediately\
@@ -105,16 +105,8 @@ wss.on('connection', (ws) => {
         // Server will send 'T' to client, not receive
         // case 'T': // team
         //     break;
-        case 't': // cooldown
-            ws.send('t' + msgData);
-           break;
-        case 'C': // cooldown time
-            ws.send('C' + msgData);
-           break;
-        case 'P': // max move hold
-            ws.send('P' + msgData);
-           break;
-                        
+//        case 'C': // cooldown
+//            break;
         }
         console.log('Received Message', message);
     });

@@ -17,34 +17,10 @@ class ChessboardNode{
         this.avaliableMoves = new Map();
         this.castles = [true, true, true, true];
         this.findAllValidMoves();
-        this.cooldownTime = 3000;
-        this.maxMoveHold = 3;
-        this.cooldown = 0;
+
+        //this.setBoardFromMessage(this.getBoardAsMessage());
     }
 
-    setCooldownTime(time){
-        this.cooldownTime = time;
-    }
-
-    setMaxMoveHold(max){
-        this.maxMoveHold = max;
-    }
-
-    setCooldown(cooldown){
-        this.cooldown = cooldown;
-    }
-
-    getCooldownTime(){
-        return this.cooldownTime;
-    }
-
-    getMaxMoveHold(){
-        return this.maxMoveHold;
-    }
-
-    getCooldown(){
-        return this.cooldown;
-    }
 
     resetBoard(){
         this.board = [
@@ -834,7 +810,6 @@ class ChessboardNode{
 
         return false;
     }
-
 
 }
 
