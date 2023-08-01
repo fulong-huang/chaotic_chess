@@ -60,8 +60,20 @@ export default function MessageClient(setBoard) {
         //     break;
         case 'T': // team
             break;
-        case 'C': // cooldown
+        case 't': { // cooldown
+            // TODO: set current cooldown to received value;
+            console.log('Cooldown Received: ' , Number(msgData));
+            console.log('RECEIVED COOLDOWN');
             break;
+        }
+        case 'C':{
+            console.log('Current Cooldown is set to: ', Number(msgData));
+            break;
+        }
+        case 'P':{
+            console.log(`Currently can only hold ${Number(msgData)} movement points`);
+            break;
+        }
         }
         return () => {
             //socket.removeEventListener('message', handleSocketMessage);

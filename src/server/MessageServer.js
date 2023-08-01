@@ -30,7 +30,12 @@ wss.on('connection', (ws) => {
     ws.send('B' + chessboard.getBoardAsMessage());
     clients.add(ws);
     console.log(`Port: ${portNum}, New Connection, currently ${clients.size} online`);
-    ws.send('wWelcome');
+
+    // Send cooldown to begin:
+    ws.send('t' + 0); // TODO: Not needed in future. Client will know it's 0
+    ws.send('C' + cooldownTime.toString());
+    ws.send('P' + maxMoveHold.toString());
+
     ws.on('message', function(message_BINARY) {
         let message = String.fromCharCode(...message_BINARY);
         let msgType = message[0];
@@ -51,7 +56,6 @@ wss.on('connection', (ws) => {
                 ws.send('ECooldown Not Finished');
                 return;
             }
-            clientInfos.get(ws).savedCDTime -= cooldownTime;
 
             // Validate Move:
             let fromX = Number(msgData[0]);
@@ -63,9 +67,14 @@ wss.on('connection', (ws) => {
                 ws.send('EInvalid Move');
                 return;
             }
+            clientInfos.get(ws).savedCDTime -= cooldownTime;
+                        
+            // Send current Cooldown:
+            ws.send('t' + clientInfos.get(ws).savedCDTime.toString());
+
             chessboard.move(fromX, fromY, toX, toY);
             chessboard.findAllValidMoves();
-            
+
             // Send client moves
             for(let client of clients) {
                 client.send(message);
@@ -84,6 +93,10 @@ wss.on('connection', (ws) => {
                 client.send('B' + chessboard.getBoardAsMessage());
                 clientInfos.get(client).lastCommandTime = currTime;
                 clientInfos.get(client).savedCDTime = 0;
+                // reset all client CD:
+                ws.send('t' + 0);
+                ws.send('C' + cooldownTime.toString());
+                ws.send('P' + maxMoveHold.toString());
             }
             break;
         }
@@ -98,23 +111,23 @@ wss.on('connection', (ws) => {
         console.log('Received Message', message);
     });
 
-    ws.on('close', () =>{
-        console.log('Connection closed');
-        clients.delete(ws);
-        if(clientInfos.get(ws).serverOwner){
-            // if owner left the room, either:
-            //  - close the room
-            //  OR
-            //  - pass owner to another player;
+    // ws.on('close', () =>{
+    //     console.log('Connection closed');
+    //     clients.delete(ws);
+    //     if(clientInfos.get(ws).serverOwner){
+    //         // if owner left the room, either:
+    //         //  - close the room
+    //         //  OR
+    //         //  - pass owner to another player;
             
-            // CURR: close all connection and room
-            for(let client of clients){
-                client.send('EServer owner left the room, Server closed');
-                client.close();
-            }
-            wss.close();
-        }
-    });
+    //         // CURR: close all connection and room
+    //         for(let client of clients){
+    //             client.send('EServer owner left the room, Server closed');
+    //             client.close();
+    //         }
+    //         wss.close();
+    //     }
+    // });
 
     // ws.on('Chess piece moved')
 });
