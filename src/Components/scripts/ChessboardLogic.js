@@ -1,18 +1,15 @@
 class ChessboardNode{
-    constructor(board = [
-        ['BR', 'BN', 'BB', 'BQ', 'BK', '', '', 'BR'],
-        // ['BP', 'BP', 'BP', 'BP', 'BP', 'BP', 'BP', 'BP'],
-        ['BP', 'BP', 'BP', '', '', '', '', ''],
-        ['',   '',   '',   '',   '',   '',   '',   ''],
-        ['',   '',   '',   'WP',   '',   '',   '',   ''],
-        ['',   '',   '',   '',   '',   '',   '',   ''],
-        ['',   '',   '',   '',   '',   '',   '',   ''],
-        ['WP', 'WP', 'WP', '', '', '', '', ''],
-        ['WR', 'WN', 'WB', 'WQ', 'WK', '', '', 'WR'],
-        // ['WP', 'WP', 'WP', 'WP', 'WP', 'WP', 'WP', 'WP'],
-        // ['WR', 'WN', 'WB', 'WQ', 'WK', 'WB', 'WN', 'WR'],
-    ]){
-        this.board = board;
+    constructor(){
+        this.board = [
+            ['BR', 'BN', 'BB', 'BQ', 'BK', 'BB', 'BN', 'BR'],
+            ['BP', 'BP', 'BP', 'BP', 'BP', 'BP', 'BP', 'BP'],
+            ['',   '',   '',   '',   '',   '',   '',   ''],
+            ['',   '',   '',   '',   '',   '',   '',   ''],
+            ['',   '',   '',   '',   '',   '',   '',   ''],
+            ['',   '',   '',   '',   '',   '',   '',   ''],
+            ['WP', 'WP', 'WP', 'WP', 'WP', 'WP', 'WP', 'WP'],
+            ['WR', 'WN', 'WB', 'WQ', 'WK', 'WB', 'WN', 'WR'],
+        ];
         this.prevSelectedPos = [];
         this.turn = 'W';
         this.enPassant = [];
