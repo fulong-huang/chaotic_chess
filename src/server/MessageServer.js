@@ -111,23 +111,23 @@ wss.on('connection', (ws) => {
         console.log('Received Message', message);
     });
 
-    // ws.on('close', () =>{
-    //     console.log('Connection closed');
-    //     clients.delete(ws);
-    //     if(clientInfos.get(ws).serverOwner){
-    //         // if owner left the room, either:
-    //         //  - close the room
-    //         //  OR
-    //         //  - pass owner to another player;
+    ws.on('close', () =>{
+        console.log('Connection closed');
+        clients.delete(ws);
+        // if(clientInfos.get(ws).serverOwner){
+        //     // if owner left the room, either:
+        //     //  - close the room
+        //     //  OR
+        //     //  - pass owner to another player;
             
-    //         // CURR: close all connection and room
-    //         for(let client of clients){
-    //             client.send('EServer owner left the room, Server closed');
-    //             client.close();
-    //         }
-    //         wss.close();
-    //     }
-    // });
+        //     // CURR: close all connection and room
+        //     for(let client of clients){
+        //         client.send('EServer owner left the room, Server closed');
+        //         client.close();
+        //     }
+        //     wss.close();
+        // }
+    });
 
     // ws.on('Chess piece moved')
 });
