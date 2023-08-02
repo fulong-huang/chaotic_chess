@@ -1,0 +1,4 @@
+@keyframes moveProgress{
+    from {width: 0px}
+    to {width: 100%}
+}
