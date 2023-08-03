@@ -4,6 +4,7 @@ import React, { useState, useEffect} from 'react';
 import RightHandMenu from './RightHandMenu.js';
 import {Box} from '@mui/material';
 import MessageClient, { chessboard } from '../client/MessageClient.js';
+import CooldownBar from './CooldownBar.js';
 
 // ChessboardRenderer.propTypes = {
 //     chessboard: PropTypes.object,
@@ -24,10 +25,12 @@ export default function ChessboardRenderer() {
     const [selectedPiece, setSelectedPiece] = useState([]);
     const [validTiles, setValidTiles] = useState([]);
 
+    const [cooldownPassed, setCooldownPassed] = useState(-1);
+
     useEffect(() => {
         if(count > 0) return;
         count++;
-        socket = new MessageClient(setBoard);
+        socket = new MessageClient(setBoard, setCooldownPassed);
     }, []);
 
     const onChessboardPieceClick = (xpos, ypos) => {
@@ -125,7 +128,7 @@ export default function ChessboardRenderer() {
                 }}
             >
                 <Box className='chessboard'>
-                    {chessboardRender()}
+                    {chessboardRender()}<CooldownBar cooldownPassed={cooldownPassed} setCooldownPassed={setCooldownPassed} />
                 </Box>
                 {/* <RightHandMenu chessboard={props.chessboard}/> */}
                 <RightHandMenu chessboard={chessboard}/>

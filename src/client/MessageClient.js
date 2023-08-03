@@ -28,7 +28,7 @@ socket.addEventListener('close', () => {
     socket.close();
 });
 
-export default function MessageClient(setBoard) {
+export default function MessageClient(setBoard, setCooldownPassed) {
     // const [board, setBoard] = useState(tempboard.getBoard());
     // const sendMessageToServer = (msg) => {
     socket.addEventListener('message', (msg) => {
@@ -62,11 +62,13 @@ export default function MessageClient(setBoard) {
             break;
         case 't': { // cooldown
             // TODO: set current cooldown to received value;
+            // cooldown time PASSED since last move
             console.log('Cooldown Received: ' , Number(msgData));
-            console.log('RECEIVED COOLDOWN');
+            setCooldownPassed(Number(msgData));
             break;
         }
         case 'C':{
+            // cooldown client has to wait before making a move
             console.log('Current Cooldown is set to: ', Number(msgData));
             break;
         }
