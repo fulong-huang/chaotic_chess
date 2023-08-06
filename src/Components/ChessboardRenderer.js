@@ -26,11 +26,12 @@ export default function ChessboardRenderer() {
     const [validTiles, setValidTiles] = useState([]);
 
     const [cooldownPassed, setCooldownPassed] = useState(-1);
+    const [maxMoveHold, setMaxMoveHold] = useState(-1);
 
     useEffect(() => {
         if(count > 0) return;
         count++;
-        socket = new MessageClient(setBoard, setCooldownPassed);
+        socket = new MessageClient(setBoard, setCooldownPassed, setMaxMoveHold);
     }, []);
 
     const onChessboardPieceClick = (xpos, ypos) => {
@@ -124,11 +125,24 @@ export default function ChessboardRenderer() {
                     overflow: 'auto', 
                     backgroundColor: '#282c34', 
                     display: 'flex', 
-                    justifyContent: 'center'
+                    // justifyContent: 'center',
+                    flexDirection: 'column',
+                    alignItems: 'center'
                 }}
             >
+                <Box                        
+                    style={{
+                        width: '100%',
+                        display: 'flex',
+                        justifyContent: 'center',
+                        flexDirection: 'column',
+                    }}
+                    className='cooldownbar'
+                >
+                    <CooldownBar cooldownPassed={cooldownPassed} setCooldownPassed={setCooldownPassed} maxMoveHold={maxMoveHold} />
+                </Box>                
                 <Box className='chessboard'>
-                    {chessboardRender()}<CooldownBar cooldownPassed={cooldownPassed} setCooldownPassed={setCooldownPassed} />
+                    {chessboardRender()}
                 </Box>
                 {/* <RightHandMenu chessboard={props.chessboard}/> */}
                 <RightHandMenu chessboard={chessboard}/>

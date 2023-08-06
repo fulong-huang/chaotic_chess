@@ -28,7 +28,7 @@ socket.addEventListener('close', () => {
     socket.close();
 });
 
-export default function MessageClient(setBoard, setCooldownPassed) {
+export default function MessageClient(setBoard, setCooldownPassed, setMaxMoveHold) {
     // const [board, setBoard] = useState(tempboard.getBoard());
     // const sendMessageToServer = (msg) => {
     socket.addEventListener('message', (msg) => {
@@ -74,6 +74,7 @@ export default function MessageClient(setBoard, setCooldownPassed) {
         }
         case 'P':{
             console.log(`Currently can only hold ${Number(msgData)} movement points`);
+            setMaxMoveHold(Number(msgData));
             break;
         }
         }

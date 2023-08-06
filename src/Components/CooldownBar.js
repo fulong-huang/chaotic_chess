@@ -32,13 +32,13 @@ export default function CooldownBar(props) {
                 }} 
                 className='progressBar'
             />
-            {Array.from({ length: 3 - 1 }).map((_, index) => (
+            {Array.from({ length: props.maxMoveHold-1 }).map((_, index) => (
                 <div
                     key={index}
                     style={{
                         position: 'absolute',
                         top: '0',
-                        left: `${(index + 1) * (100 / 3)}%`,
+                        left: `${(index + 1) * (100 / props.maxMoveHold)}%`,
                         width: '2px',
                         height: '100%',
                         backgroundColor: 'white',

@@ -11,7 +11,7 @@ const clientInfos = new Map();
 // TODO: 
 //  NOT const, should be modifiable
 const cooldownTime = 3000;
-const maxMoveHold = 3;
+const maxMoveHold = 5;
 
 // possibly timeout 10(?) seconds to check if any client connected, 
 //  if no clients are in the room then close it immediately\
