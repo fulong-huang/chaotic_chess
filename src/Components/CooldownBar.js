@@ -6,30 +6,38 @@ import './CooldownBar.css';
 
 CooldownBar.propTypes = {
     cooldownPassed: PropTypes.number,
-    setCooldownPassed: PropTypes.func
+    setCooldownPassed: PropTypes.func,
+    maxMoveHold: PropTypes.number
 };
 
 export default function CooldownBar(props) {
-    const [numReceived, setNumReceived] = useState(0);
+    const [animationKey, setAnimationKey] = useState(0);
+    const [boxStyle, setBoxStyle] = useState({
+        height: '20px', 
+        backgroundColor: 'red',
+        animationName: 'moveProgress',
+        animationDuration: (3 * (props.maxMoveHold == -1? 1 : 5)) + 's',
+        animationTimingFunction: 'linear',
+    }); 
     useEffect(() => {
-        if(props.cooldownPassed >= 0){
-            setNumReceived(numReceived + 1);
-        }
-        console.log('numreceived: ' + -(numReceived * 3) + 's');
+        setAnimationKey(animationKey + 1);
+        setBoxStyle({
+            ...boxStyle,
+            animationDelay: -props.cooldownPassed / 1000 + 's',
+        });
     }, [props.cooldownPassed]);
-
+    useEffect(() => {
+        setBoxStyle({
+            ...boxStyle,
+            animationDuration: (3 * props.maxMoveHold) + 's',
+        })
+    }, [props.maxMoveHold]);
     return (
         <Box
             sx={{ width: '100%', position: 'relative' }}>
             <div
-                style={{
-                    height: '20px', 
-                    backgroundColor: 'red',
-                    animationName: 'moveProgress',
-                    animationDuration: '9s',
-                    animationTimingFunction: 'linear',
-                    animationDelay: (numReceived * 3) + 's', // 3 is from [cooldown time / 1000]
-                }} 
+                key={animationKey}
+                style={boxStyle} 
                 className='progressBar'
             />
             {Array.from({ length: props.maxMoveHold-1 }).map((_, index) => (
