@@ -31,7 +31,11 @@ export default function ChessboardRenderer() {
     useEffect(() => {
         if(count > 0) return;
         count++;
-        socket = new MessageClient(setBoard, setCooldownPassed, setMaxMoveHold);
+        socket = new MessageClient({
+            setBoard,
+            setCooldownPassed,
+            setMaxMoveHold
+        });
     }, []);
 
     const onChessboardPieceClick = (xpos, ypos) => {
