@@ -47,6 +47,10 @@
         max-width: 300px;
         max-height: 300px;
     }
+    
+    .cooldownbar {
+        max-width: 300px;
+    }
 
     .chessboard_cell {
         width: 37.5px;
@@ -64,6 +68,10 @@
         width: 75px;
         height: 75px;
     }
+
+    .cooldownbar {
+        max-width: 600px;
+    }
 }
 
 @media (min-width: 901px) {
@@ -75,5 +83,9 @@
     .chessboard_cell {
         width: 100px;
         height: 100px;
+    }
+
+    .cooldownbar {
+        max-width: 800px;
     }
 }

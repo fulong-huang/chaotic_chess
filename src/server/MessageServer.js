@@ -11,7 +11,7 @@ const clientInfos = new Map();
 // TODO: 
 //  NOT const, should be modifiable
 const cooldownTime = 3000;
-const maxMoveHold = 3;
+const maxMoveHold = 5;
 
 // possibly timeout 10(?) seconds to check if any client connected, 
 //  if no clients are in the room then close it immediately\
@@ -23,7 +23,7 @@ let first = true;
 wss.on('connection', (ws) => {
     clientInfos.set(ws, {
         serverOwner: first,
-        savedCDTime : 0,
+        savedCDTime : -1,
         lastCommandTime : Date.now(),
     });
     first = false;
@@ -32,7 +32,7 @@ wss.on('connection', (ws) => {
     console.log(`Port: ${portNum}, New Connection, currently ${clients.size} online`);
 
     // Send cooldown to begin:
-    ws.send('t' + 0); // TODO: Not needed in future. Client will know it's 0
+    ws.send('t' + -1); 
     ws.send('C' + cooldownTime.toString());
     ws.send('P' + maxMoveHold.toString());
 
@@ -94,7 +94,7 @@ wss.on('connection', (ws) => {
                 clientInfos.get(client).lastCommandTime = currTime;
                 clientInfos.get(client).savedCDTime = 0;
                 // reset all client CD:
-                ws.send('t' + 0);
+                ws.send('t' + -1);
                 ws.send('C' + cooldownTime.toString());
                 ws.send('P' + maxMoveHold.toString());
             }
@@ -111,23 +111,23 @@ wss.on('connection', (ws) => {
         console.log('Received Message', message);
     });
 
-    // ws.on('close', () =>{
-    //     console.log('Connection closed');
-    //     clients.delete(ws);
-    //     if(clientInfos.get(ws).serverOwner){
-    //         // if owner left the room, either:
-    //         //  - close the room
-    //         //  OR
-    //         //  - pass owner to another player;
+    ws.on('close', () =>{
+        console.log('Connection closed');
+        clients.delete(ws);
+        // if(clientInfos.get(ws).serverOwner){
+        //     // if owner left the room, either:
+        //     //  - close the room
+        //     //  OR
+        //     //  - pass owner to another player;
             
-    //         // CURR: close all connection and room
-    //         for(let client of clients){
-    //             client.send('EServer owner left the room, Server closed');
-    //             client.close();
-    //         }
-    //         wss.close();
-    //     }
-    // });
+        //     // CURR: close all connection and room
+        //     for(let client of clients){
+        //         client.send('EServer owner left the room, Server closed');
+        //         client.close();
+        //     }
+        //     wss.close();
+        // }
+    });
 
     // ws.on('Chess piece moved')
 });

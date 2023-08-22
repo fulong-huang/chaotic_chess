@@ -1,4 +1,5 @@
 import ChessboardNode from '../Components/scripts/ChessboardLogic.js';
+import PropTypes from 'prop-types';
 // import React, { useState } from 'react';
 // const tempboard = new ChessboardNode();
 export const chessboard = new ChessboardNode();
@@ -28,9 +29,16 @@ socket.addEventListener('close', () => {
     socket.close();
 });
 
-export default function MessageClient(setBoard) {
+MessageClient.PropTypes = {
+    setBoard: PropTypes.func, 
+    setCooldownPassed: PropTypes.number, 
+    setMaxMoveHold: PropTypes.func
+};
+
+export default function MessageClient(props) {
     // const [board, setBoard] = useState(tempboard.getBoard());
     // const sendMessageToServer = (msg) => {
+    let prevCooldownReceived = -1;
     socket.addEventListener('message', (msg) => {
         // msg.data: message (string) send by the server
         // console.log(msg.data);
@@ -45,12 +53,12 @@ export default function MessageClient(setBoard) {
             chessboard.move(Number(msgData[0]), Number(msgData[1]), 
                 Number(msgData[2]), Number(msgData[3]));
             chessboard.findAllValidMoves();
-            setBoard([...chessboard.getBoard()]);
+            props.setBoard([...chessboard.getBoard()]);
             chessboard.prevSelectedPos = [];
             break;
         case 'B':{ // board (req/send)
             chessboard.setBoardFromMessage(msgData);
-            setBoard([...chessboard.getBoard()]);
+            props.setBoard([...chessboard.getBoard()]);
             break;
         }
         case 'S': // start
@@ -62,16 +70,25 @@ export default function MessageClient(setBoard) {
             break;
         case 't': { // cooldown
             // TODO: set current cooldown to received value;
+            // cooldown time PASSED since last move
             console.log('Cooldown Received: ' , Number(msgData));
-            console.log('RECEIVED COOLDOWN');
+            // must reassign different value, in order to trigger useEffect
+            let newCooldown = Number(msgData);
+            if(prevCooldownReceived === newCooldown){
+                newCooldown++;
+            }
+            props.setCooldownPassed(newCooldown);
+            prevCooldownReceived = newCooldown;
             break;
         }
         case 'C':{
+            // cooldown client has to wait before making a move
             console.log('Current Cooldown is set to: ', Number(msgData));
             break;
         }
         case 'P':{
             console.log(`Currently can only hold ${Number(msgData)} movement points`);
+            props.setMaxMoveHold(Number(msgData));
             break;
         }
         }

@@ -4,6 +4,7 @@ import React, { useState, useEffect} from 'react';
 import RightHandMenu from './RightHandMenu.js';
 import {Box} from '@mui/material';
 import MessageClient, { chessboard } from '../client/MessageClient.js';
+import CooldownBar from './CooldownBar.js';
 
 // ChessboardRenderer.propTypes = {
 //     chessboard: PropTypes.object,
@@ -24,10 +25,17 @@ export default function ChessboardRenderer() {
     const [selectedPiece, setSelectedPiece] = useState([]);
     const [validTiles, setValidTiles] = useState([]);
 
+    const [cooldownPassed, setCooldownPassed] = useState(-1);
+    const [maxMoveHold, setMaxMoveHold] = useState(-1);
+
     useEffect(() => {
         if(count > 0) return;
         count++;
-        socket = new MessageClient(setBoard);
+        socket = new MessageClient({
+            setBoard,
+            setCooldownPassed,
+            setMaxMoveHold
+        });
     }, []);
 
     const onChessboardPieceClick = (xpos, ypos) => {
@@ -121,9 +129,22 @@ export default function ChessboardRenderer() {
                     overflow: 'auto', 
                     backgroundColor: '#282c34', 
                     display: 'flex', 
-                    justifyContent: 'center'
+                    // justifyContent: 'center',
+                    flexDirection: 'column',
+                    alignItems: 'center'
                 }}
             >
+                <Box                        
+                    style={{
+                        width: '100%',
+                        display: 'flex',
+                        justifyContent: 'center',
+                        flexDirection: 'column',
+                    }}
+                    className='cooldownbar'
+                >
+                    <CooldownBar cooldownPassed={cooldownPassed} setCooldownPassed={setCooldownPassed} maxMoveHold={maxMoveHold} />
+                </Box>                
                 <Box className='chessboard'>
                     {chessboardRender()}
                 </Box>
